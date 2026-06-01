@@ -1,0 +1,1109 @@
+[
+  {
+    "min_price": 559,
+    "entries": [
+      {
+        "price": 559,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 559 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, July 31. Total duration 4 hr 20 min. Select f"
+      },
+      {
+        "price": 619,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 619 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, July 31. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at Amst"
+      },
+      {
+        "price": 619,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 619 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 1:25 PM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 10:55 PM on Friday, July 31. Total duration 7 hr 30 min. Layover (1 of 1) is "
+      },
+      {
+        "price": 710,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 710 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, July 31. Total duration 6 hr 10 min. Layover (1 of 1) is a"
+      },
+      {
+        "price": 1335,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1335 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, July 31. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min layove"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-07-31",
+    "ret": "2026-08-03",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0wM2oHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 532,
+    "entries": [
+      {
+        "price": 532,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 532 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, July 31. Total duration 4 hr 20 min. Select f"
+      },
+      {
+        "price": 617,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 617 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, July 31. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at Amst"
+      },
+      {
+        "price": 617,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 617 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 1:25 PM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 10:55 PM on Friday, July 31. Total duration 7 hr 30 min. Layover (1 of 1) is "
+      },
+      {
+        "price": 708,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 708 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, July 31. Total duration 6 hr 10 min. Layover (1 of 1) is a"
+      },
+      {
+        "price": 1274,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1274 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, July 31 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, July 31. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min layove"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-07-31",
+    "ret": "2026-08-04",
+    "dep_wd": "Fri",
+    "ret_wd": "Tue",
+    "trip_days": 4,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0wNGoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 585,
+    "entries": [
+      {
+        "price": 585,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 585 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Saturday, August 1. Total duration 4 hr 20 min. Se"
+      },
+      {
+        "price": 619,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 619 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Saturday, August 1. Total duration 6 hr 10 min. Layover (1 of 1"
+      },
+      {
+        "price": 1765,
+        "airline": "Iberia and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1765 euros round trip total. 1 stop flight with Iberia and Pegasus. Operated by Iberia Express. Leaves Dublin Airport at 9:50 AM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Sunday, August 2. Total duration 31 hr 50 min. Layover (1 o"
+      },
+      {
+        "price": 1775,
+        "airline": "Iberia and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1775 euros round trip total. 1 stop flight with Iberia and Pegasus. Operated by Iberia Express. Leaves Dublin Airport at 6:20 PM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Sunday, August 2. Total duration 23 hr 20 min. Layover (1 o"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-01",
+    "ret": "2026-08-03",
+    "dep_wd": "Sat",
+    "ret_wd": "Mon",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTAxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0wM2oHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 558,
+    "entries": [
+      {
+        "price": 558,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 558 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Saturday, August 1. Total duration 4 hr 20 min. Se"
+      },
+      {
+        "price": 617,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 617 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Saturday, August 1. Total duration 6 hr 10 min. Layover (1 of 1"
+      },
+      {
+        "price": 1660,
+        "airline": "Iberia and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1660 euros round trip total. 1 stop flight with Iberia and Pegasus. Operated by Iberia Express. Leaves Dublin Airport at 6:20 PM on Saturday, August 1 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Sunday, August 2. Total duration 23 hr 20 min. Layover (1 o"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-01",
+    "ret": "2026-08-04",
+    "dep_wd": "Sat",
+    "ret_wd": "Tue",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTAxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0wNGoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 480,
+    "entries": [
+      {
+        "price": 480,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 480 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 7. Total duration 4 hr 20 min. Select"
+      },
+      {
+        "price": 667,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 667 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 7. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at Am"
+      },
+      {
+        "price": 667,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 667 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 1:25 PM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 10:55 PM on Friday, August 7. Total duration 7 hr 30 min. Layover (1 of 1) i"
+      },
+      {
+        "price": 736,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 736 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 7. Total duration 6 hr 10 min. Layover (1 of 1) is"
+      },
+      {
+        "price": 1058,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1058 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 7. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min layo"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-07",
+    "ret": "2026-08-09",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTA3agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0wOWoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 470,
+    "entries": [
+      {
+        "price": 470,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 470 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 7. Total duration 4 hr 20 min. Select"
+      },
+      {
+        "price": 667,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 667 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 7. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at Am"
+      },
+      {
+        "price": 667,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 667 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 1:25 PM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 10:55 PM on Friday, August 7. Total duration 7 hr 30 min. Layover (1 of 1) i"
+      },
+      {
+        "price": 736,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 736 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 7. Total duration 6 hr 10 min. Layover (1 of 1) is"
+      },
+      {
+        "price": 995,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 995 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 7 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 7. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min layov"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-07",
+    "ret": "2026-08-10",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTA3agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0xMGoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 511,
+    "entries": [
+      {
+        "price": 511,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 511 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 14. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 647,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 647 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 14. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at "
+      },
+      {
+        "price": 827,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 827 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 14. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 912,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 912 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 14. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1237,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1237 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 15. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-14",
+    "ret": "2026-08-16",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTE0agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0xNmoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 496,
+    "entries": [
+      {
+        "price": 496,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 496 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 14. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 647,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 647 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 14. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at "
+      },
+      {
+        "price": 827,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 827 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 14. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 937,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 937 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 14. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1262,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1262 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 14 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 15. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-14",
+    "ret": "2026-08-17",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTE0agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0xN2oHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 383,
+    "entries": [
+      {
+        "price": 383,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 383 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 21. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 647,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 647 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 11:10 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 9:00 PM on Friday, August 21. Total duration 7 hr 50 min. Layover (1 of 1) is a 2 hr 50 min layover at"
+      },
+      {
+        "price": 736,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 736 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 21. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 845,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 845 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 21. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1157,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1157 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 22. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-21",
+    "ret": "2026-08-23",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTIxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0yM2oHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 383,
+    "entries": [
+      {
+        "price": 383,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 383 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 21. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 647,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 647 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 11:10 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 9:00 PM on Friday, August 21. Total duration 7 hr 50 min. Layover (1 of 1) is a 2 hr 50 min layover at"
+      },
+      {
+        "price": 736,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 736 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 21. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 845,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 845 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 21. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1157,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1157 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 21 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 22. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-21",
+    "ret": "2026-08-24",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTIxagwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0yNGoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 418,
+    "entries": [
+      {
+        "price": 418,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 418 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 28. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 614,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 614 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 28. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at "
+      },
+      {
+        "price": 629,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 629 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 28. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 908,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 908 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 28. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1070,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1070 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 29. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-28",
+    "ret": "2026-08-30",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTI4agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0zMGoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 404,
+    "entries": [
+      {
+        "price": 404,
+        "airline": "Pegasus",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 404 euros round trip total.This price does not include overhead bin access. Nonstop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 8:25 PM on Friday, August 28. Total duration 4 hr 20 min. Sele"
+      },
+      {
+        "price": 614,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 614 euros round trip total. 1 stop flight with KLM and Pegasus. Leaves Dublin Airport at 5:55 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 28. Total duration 9 hr 10 min. Layover (1 of 1) is a 4 hr 10 min layover at "
+      },
+      {
+        "price": 629,
+        "airline": "KLM and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 629 euros round trip total. 1 stop flight with KLM and Pegasus. Operated by KLM Cityhopper. Leaves Dublin Airport at 8:55 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 5:05 PM on Friday, August 28. Total duration 6 hr 10 min. Layover (1 of 1) "
+      },
+      {
+        "price": 908,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 908 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:20 AM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Friday, August 28. Total duration 11 hr 20 min. Layover (1 of 1) is a 4 hr 35 min lay"
+      },
+      {
+        "price": 1070,
+        "airline": "Aer Lingus and Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 1070 euros round trip total. 1 stop flight with Aer Lingus and Pegasus. Leaves Dublin Airport at 6:25 PM on Friday, August 28 and arrives at Sabiha G\u00f6k\u00e7en International Airport at 7:40 PM on Saturday, August 29. Total duration 23 hr 15 min. Layover (1 of 1) is a 16 hr 30 min"
+      }
+    ],
+    "dest": "SAW",
+    "dep": "2026-08-28",
+    "ret": "2026-08-31",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTI4agwIAhIIL20vMDJjZnRyBwgBEgNTQVcaIxIKMjAyNi0wOC0zMWoHCAESA1NBV3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 504,
+    "entries": [
+      {
+        "price": 504,
+        "airline": "Air Baltic",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 504 euros round trip total. 1 stop flight with Air Baltic. Leaves Dublin Airport at 5:15 PM on Friday, July 31 and arrives at Antalya Airport at 7:15 PM on Saturday, August 1. Total duration 24 hr. Layover (1 of 1) is a 17 hr 20 min overnight layover at Riga Airport in Riga."
+      },
+      {
+        "price": 572,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 572 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, July 31 and arrives at Antalya Airport at 11:20 AM on Saturday, August 1. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in Ge"
+      },
+      {
+        "price": 609,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 609 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, July 31 and arrives at Antalya Airport at 8:10 AM on Saturday, August 1. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes A"
+      },
+      {
+        "price": 638,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 638 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Friday, July 31 and arrives at Antalya Airport at 3:50 PM on Friday, July 31. Total duration 8 hr 15 min. Layover (1 of 1) is a 2 hr 10 min layover at Istanbul Airport in Ist"
+      },
+      {
+        "price": 630,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 630 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, July 31 and arrives at Antalya Airport at 7:05 AM on Saturday, August 1. Total duration 15 hr. Layover (1 of 1) is a 9 hr 20 mi"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-07-31",
+    "ret": "2026-08-03",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0wM2oHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 428,
+    "entries": [
+      {
+        "price": 428,
+        "airline": "Air Baltic",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 428 euros round trip total. 1 stop flight with Air Baltic. Leaves Dublin Airport at 5:15 PM on Friday, July 31 and arrives at Antalya Airport at 7:15 PM on Saturday, August 1. Total duration 24 hr. Layover (1 of 1) is a 17 hr 20 min overnight layover at Riga Airport in Riga."
+      },
+      {
+        "price": 533,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 533 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, July 31 and arrives at Antalya Airport at 8:10 AM on Saturday, August 1. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes A"
+      },
+      {
+        "price": 633,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 633 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Friday, July 31 and arrives at Antalya Airport at 3:50 PM on Friday, July 31. Total duration 8 hr 15 min. Layover (1 of 1) is a 2 hr 10 min layover at Istanbul Airport in Ist"
+      },
+      {
+        "price": 647,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 647 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, July 31 and arrives at Antalya Airport at 7:05 AM on Saturday, August 1. Total duration 15 hr. Layover (1 of 1) is a 9 hr 20 mi"
+      },
+      {
+        "price": 664,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 664 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, July 31 and arrives at Antalya Airport at 1:30 AM on Saturday, August 1. Total duration 9 hr 25 min. Layover (1 of 1) is a 3 hr"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-07-31",
+    "ret": "2026-08-04",
+    "dep_wd": "Fri",
+    "ret_wd": "Tue",
+    "trip_days": 4,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0wNGoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 436,
+    "entries": [
+      {
+        "price": 436,
+        "airline": "SunExpress",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 436 euros round trip total. Nonstop flight with SunExpress. Leaves Dublin Airport at 12:30 PM on Saturday, August 1 and arrives at Antalya Airport at 7:25 PM on Saturday, August 1. Total duration 4 hr 55 min. Select flight"
+      },
+      {
+        "price": 549,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 549 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Saturday, August 1 and arrives at Antalya Airport at 8:10 AM on Sunday, August 2. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes "
+      },
+      {
+        "price": 590,
+        "airline": "SWISS and Edelweiss Air",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 590 euros round trip total. 1 stop flight with SWISS and Edelweiss Air. Operated by Helvetic. Leaves Dublin Airport at 8:40 AM on Saturday, August 1 and arrives at Antalya Airport at 5:55 PM on Saturday, August 1. Total duration 7 hr 15 min. Layover (1 of 1) is a 1 hr 45 min"
+      },
+      {
+        "price": 638,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 638 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:10 PM on Saturday, August 1 and arrives at Antalya Airport at 3:20 AM on Sunday, August 2. Total duration 8 hr 10 min. Layover (1 of 1) is a 2 hr 25 min layover at Istanbul Airport in"
+      },
+      {
+        "price": 554,
+        "airline": "SWISS and Edelweiss Air",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 554 euros round trip total. 1 stop flight with SWISS and Edelweiss Air. Operated by Air Baltic. Leaves Dublin Airport at 6:35 PM on Saturday, August 1 and arrives at Antalya Airport at 10:55 AM on Sunday, August 2. Total duration 14 hr 20 min. Layover (1 of 1) is a 8 hr 55 m"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-01",
+    "ret": "2026-08-03",
+    "dep_wd": "Sat",
+    "ret_wd": "Mon",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTAxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0wM2oHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 360,
+    "entries": [
+      {
+        "price": 360,
+        "airline": "SunExpress",
+        "stops": "Nonstop",
+        "class": "Economy",
+        "snippet_head": "From 360 euros round trip total. Nonstop flight with SunExpress. Leaves Dublin Airport at 12:30 PM on Saturday, August 1 and arrives at Antalya Airport at 7:25 PM on Saturday, August 1. Total duration 4 hr 55 min. Select flight"
+      },
+      {
+        "price": 473,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 473 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Saturday, August 1 and arrives at Antalya Airport at 8:10 AM on Sunday, August 2. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes "
+      },
+      {
+        "price": 633,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 633 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:10 PM on Saturday, August 1 and arrives at Antalya Airport at 3:20 AM on Sunday, August 2. Total duration 8 hr 10 min. Layover (1 of 1) is a 2 hr 25 min layover at Istanbul Airport in"
+      },
+      {
+        "price": 633,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 633 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Saturday, August 1 and arrives at Antalya Airport at 3:50 PM on Saturday, August 1. Total duration 8 hr 15 min. Layover (1 of 1) is a 2 hr 10 min layover at Istanbul Airport "
+      },
+      {
+        "price": 660,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 660 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Saturday, August 1 and arrives at Antalya Airport at 9:20 AM on Sunday, August 2. Total duration 17 hr 15 min. Layover (1 of 1) is a 11"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-01",
+    "ret": "2026-08-04",
+    "dep_wd": "Sat",
+    "ret_wd": "Tue",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTAxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0wNGoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 360,
+    "entries": [
+      {
+        "price": 360,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 360 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 7 and arrives at Antalya Airport at 11:20 AM on Saturday, August 8. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in G"
+      },
+      {
+        "price": 423,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 423 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 8:45 AM on Friday, August 7 and arrives at Antalya Airport at 6:25 PM on Friday, August 7. Total duration 7 hr 40 min. Layover (1 of 1) is a 2 hr 5 min layover at Frankfurt Airp"
+      },
+      {
+        "price": 463,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 463 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 7 and arrives at Antalya Airport at 8:10 AM on Saturday, August 8. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes "
+      },
+      {
+        "price": 547,
+        "airline": "SWISS and Edelweiss Air",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 547 euros round trip total. 1 stop flight with SWISS and Edelweiss Air. Operated by Air Baltic. Leaves Dublin Airport at 6:35 PM on Friday, August 7 and arrives at Antalya Airport at 5:55 PM on Saturday, August 8. Total duration 21 hr 20 min. Layover (1 of 1) is a 15 hr 55 m"
+      },
+      {
+        "price": 581,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 581 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 7 and arrives at Antalya Airport at 7:05 AM on Saturday, August 8. Total duration 15 hr. Layover (1 of 1) is a 9 hr 20 m"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-07",
+    "ret": "2026-08-09",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTA3agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0wOWoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 475,
+    "entries": [
+      {
+        "price": 475,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 475 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 7 and arrives at Antalya Airport at 11:20 AM on Saturday, August 8. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in G"
+      },
+      {
+        "price": 489,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 489 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 7 and arrives at Antalya Airport at 8:10 AM on Saturday, August 8. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Menderes "
+      },
+      {
+        "price": 538,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 538 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 8:45 AM on Friday, August 7 and arrives at Antalya Airport at 6:25 PM on Friday, August 7. Total duration 7 hr 40 min. Layover (1 of 1) is a 2 hr 5 min layover at Frankfurt Airp"
+      },
+      {
+        "price": 607,
+        "airline": "Turkish Airlines",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 607 euros round trip total. 1 stop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Friday, August 7 and arrives at Antalya Airport at 3:50 PM on Friday, August 7. Total duration 8 hr 15 min. Layover (1 of 1) is a 2 hr 10 min layover at Istanbul Airport in I"
+      },
+      {
+        "price": 538,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 538 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 7 and arrives at Antalya Airport at 7:05 AM on Saturday, August 8. Total duration 15 hr. Layover (1 of 1) is a 9 hr 20 m"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-07",
+    "ret": "2026-08-10",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTA3agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0xMGoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 413,
+    "entries": [
+      {
+        "price": 413,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 413 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 14 and arrives at Antalya Airport at 11:20 AM on Saturday, August 15. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 453,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 453 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 14 and arrives at Antalya Airport at 8:10 AM on Saturday, August 15. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 14 and arrives at Antalya Airport at 4:10 PM on Friday, August 14. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 8:45 AM on Friday, August 14 and arrives at Antalya Airport at 6:25 PM on Friday, August 14. Total duration 7 hr 40 min. Layover (1 of 1) is a 2 hr 5 min layover at Frankfurt Ai"
+      },
+      {
+        "price": 533,
+        "airline": "SWISS and Edelweiss Air",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 533 euros round trip total. 1 stop flight with SWISS and Edelweiss Air. Operated by Air Baltic. Leaves Dublin Airport at 6:35 PM on Friday, August 14 and arrives at Antalya Airport at 5:55 PM on Saturday, August 15. Total duration 21 hr 20 min. Layover (1 of 1) is a 15 hr 55"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-14",
+    "ret": "2026-08-16",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTE0agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0xNmoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 375,
+    "entries": [
+      {
+        "price": 375,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 375 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 14 and arrives at Antalya Airport at 11:20 AM on Saturday, August 15. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 456,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 456 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 14 and arrives at Antalya Airport at 4:10 PM on Friday, August 14. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      },
+      {
+        "price": 456,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 456 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 8:45 AM on Friday, August 14 and arrives at Antalya Airport at 6:25 PM on Friday, August 14. Total duration 7 hr 40 min. Layover (1 of 1) is a 2 hr 5 min layover at Frankfurt Ai"
+      },
+      {
+        "price": 479,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 479 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 14 and arrives at Antalya Airport at 8:10 AM on Saturday, August 15. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 496,
+        "airline": "SWISS and Edelweiss Air",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 496 euros round trip total. 1 stop flight with SWISS and Edelweiss Air. Operated by Air Baltic. Leaves Dublin Airport at 6:35 PM on Friday, August 14 and arrives at Antalya Airport at 5:55 PM on Saturday, August 15. Total duration 21 hr 20 min. Layover (1 of 1) is a 15 hr 55"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-14",
+    "ret": "2026-08-17",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTE0agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0xN2oHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 293,
+    "entries": [
+      {
+        "price": 293,
+        "airline": "Norwegian",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 293 euros round trip total.This price does not include overhead bin access. 1 stop flight with Norwegian. Operated by Norwegian. Leaves Dublin Airport at 7:45 PM on Friday, August 21 and arrives at Antalya Airport at 12:05 PM on Saturday, August 22. Total duration 14 hr 20 m"
+      },
+      {
+        "price": 393,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 393 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 21 and arrives at Antalya Airport at 8:10 AM on Saturday, August 22. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 431,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 431 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 21 and arrives at Antalya Airport at 11:20 AM on Saturday, August 22. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 490,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 490 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 21 and arrives at Antalya Airport at 1:30 AM on Saturday, August 22. Total duration 9 hr 25 min. Layover (1 of 1) is a 3"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 21 and arrives at Antalya Airport at 4:10 PM on Friday, August 21. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-21",
+    "ret": "2026-08-23",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTIxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0yM2oHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 329,
+    "entries": [
+      {
+        "price": 329,
+        "airline": "Norwegian",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 329 euros round trip total.This price does not include overhead bin access. 1 stop flight with Norwegian. Operated by Norwegian. Leaves Dublin Airport at 7:45 PM on Friday, August 21 and arrives at Antalya Airport at 12:05 PM on Saturday, August 22. Total duration 14 hr 20 m"
+      },
+      {
+        "price": 429,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 429 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 21 and arrives at Antalya Airport at 8:10 AM on Saturday, August 22. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 475,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 475 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 21 and arrives at Antalya Airport at 11:20 AM on Saturday, August 22. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 477,
+        "airline": "Pegasus",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 477 euros round trip total.This price does not include overhead bin access. 1 stop flight with Pegasus. Leaves Dublin Airport at 2:05 PM on Friday, August 21 and arrives at Antalya Airport at 1:30 AM on Saturday, August 22. Total duration 9 hr 25 min. Layover (1 of 1) is a 3"
+      },
+      {
+        "price": 538,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 538 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 21 and arrives at Antalya Airport at 4:10 PM on Friday, August 21. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-21",
+    "ret": "2026-08-24",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTIxagwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0yNGoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 378,
+    "entries": [
+      {
+        "price": 378,
+        "airline": "Norwegian",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 378 euros round trip total.This price does not include overhead bin access. 1 stop flight with Norwegian. Operated by Norwegian. Leaves Dublin Airport at 7:45 PM on Friday, August 28 and arrives at Antalya Airport at 12:05 PM on Saturday, August 29. Total duration 14 hr 20 m"
+      },
+      {
+        "price": 397,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 397 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 28 and arrives at Antalya Airport at 11:20 AM on Saturday, August 29. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 423,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 423 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 28 and arrives at Antalya Airport at 8:10 AM on Saturday, August 29. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 28 and arrives at Antalya Airport at 4:10 PM on Friday, August 28. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 8:45 AM on Friday, August 28 and arrives at Antalya Airport at 6:25 PM on Friday, August 28. Total duration 7 hr 40 min. Layover (1 of 1) is a 2 hr 5 min layover at Frankfurt Ai"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-28",
+    "ret": "2026-08-30",
+    "dep_wd": "Fri",
+    "ret_wd": "Sun",
+    "trip_days": 2,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTI4agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0zMGoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  },
+  {
+    "min_price": 374,
+    "entries": [
+      {
+        "price": 374,
+        "airline": "Norwegian",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 374 euros round trip total.This price does not include overhead bin access. 1 stop flight with Norwegian. Operated by Norwegian. Leaves Dublin Airport at 7:45 PM on Friday, August 28 and arrives at Antalya Airport at 12:05 PM on Saturday, August 29. Total duration 14 hr 20 m"
+      },
+      {
+        "price": 397,
+        "airline": "SWISS",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 397 euros round trip total. 1 stop flight with SWISS. Leaves Dublin Airport at 8:15 PM on Friday, August 28 and arrives at Antalya Airport at 11:20 AM on Saturday, August 29. Total duration 13 hr 5 min. Layover (1 of 1) is a 7 hr 15 min overnight layover at Geneva Airport in"
+      },
+      {
+        "price": 419,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 419 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 28 and arrives at Antalya Airport at 8:10 AM on Saturday, August 29. Total duration 11 hr 30 min. Layover (1 of 1) is a 6 hr overnight layover at Izmir Adnan Mendere"
+      },
+      {
+        "price": 409,
+        "airline": "SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 409 euros round trip total. 1 stop flight with SunExpress. Leaves Dublin Airport at 6:40 PM on Friday, August 28 and arrives at Antalya Airport at 11:05 PM on Saturday, August 29. Total duration 26 hr 25 min. Layover (1 of 1) is a 20 hr 55 min overnight layover at Izmir Adna"
+      },
+      {
+        "price": 494,
+        "airline": "Lufthansa and SunExpress",
+        "stops": "1 stop",
+        "class": "Economy",
+        "snippet_head": "From 494 euros round trip total. 1 stop flight with Lufthansa and SunExpress. Leaves Dublin Airport at 6:05 AM on Friday, August 28 and arrives at Antalya Airport at 4:10 PM on Friday, August 28. Total duration 8 hr 5 min. Layover (1 of 1) is a 2 hr 25 min layover at Frankfurt Ai"
+      }
+    ],
+    "dest": "AYT",
+    "dep": "2026-08-28",
+    "ret": "2026-08-31",
+    "dep_wd": "Fri",
+    "ret_wd": "Mon",
+    "trip_days": 3,
+    "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA4LTI4agwIAhIIL20vMDJjZnRyBwgBEgNBWVQaIxIKMjAyNi0wOC0zMWoHCAESA0FZVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR"
+  }
+]
