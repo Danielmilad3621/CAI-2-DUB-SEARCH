@@ -3,8 +3,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from app.debug_log import debug_log
-
 _SANDBOX_MARKERS = ("cursor-sandbox-cache", "/T/cursor-sandbox-cache/")
 
 
@@ -38,21 +36,6 @@ def prepare_playwright_browsers() -> str:
     before = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
     user_cache = _user_playwright_cache()
 
-    # #region agent log
-    debug_log(
-        "A",
-        "browser_env.py:prepare",
-        "env before",
-        {
-            "PLAYWRIGHT_BROWSERS_PATH": before,
-            "user_cache": str(user_cache) if user_cache else None,
-            "sandbox_in_path": any(m in (before or "") for m in _SANDBOX_MARKERS),
-            "resolved_exe": resolve_firefox_executable(),
-        },
-        run_id="post-fix",
-    )
-    # #endregion
-
     if before and any(m in before for m in _SANDBOX_MARKERS):
         os.environ.pop("PLAYWRIGHT_BROWSERS_PATH", None)
         if user_cache:
@@ -65,17 +48,5 @@ def prepare_playwright_browsers() -> str:
         status = "cleared_missing_path"
     else:
         status = "unchanged"
-
-    after = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
-
-    # #region agent log
-    debug_log(
-        "B",
-        "browser_env.py:prepare",
-        "env after",
-        {"status": status, "PLAYWRIGHT_BROWSERS_PATH": after},
-        run_id="post-fix",
-    )
-    # #endregion
 
     return status

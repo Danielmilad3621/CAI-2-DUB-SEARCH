@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Literal
 
@@ -19,9 +20,15 @@ ROOT = Path(__file__).resolve().parent.parent
 
 app = FastAPI(title="DUB Flight Finder", version="0.1.0")
 
+_origins_raw = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173",
+)
+_origins = [o.strip() for o in _origins_raw.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,11 +36,11 @@ app.add_middleware(
 
 
 class ScanCreate(BaseModel):
-    scanner: Literal["turkey", "egyptair"]
+    scanner: Literal["turkey", "egyptair", "ams"]
     destinations: str = "IST,SAW,AYT"
     currency: str = "EUR"
     start: str | None = None
-    window_days: int = Field(default=60, ge=7, le=120)
+    window_days: int = Field(default=60, ge=7, le=366)
     min_trip_days: int = Field(default=3, ge=1, le=30)
     max_trip_days: int = Field(default=14, ge=2, le=60)
     weekdays: str = "Sat,Sun,Tue,Thu"
@@ -57,6 +64,15 @@ SCANNERS = [
         "default_dest": "CAI",
         "eta_minutes": 30,
         "combinations": 245,
+    },
+    {
+        "id": "ams",
+        "name": "Dublin → Amsterdam",
+        "subtitle": "All airlines · daily",
+        "origin": "DUB",
+        "default_dest": "AMS",
+        "eta_minutes": 90,
+        "combinations": 720,
     },
 ]
 
