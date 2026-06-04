@@ -9,3 +9,4 @@ frontend/dist/
 results.json
 .env
 .env.*
+!.env.example

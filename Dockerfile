@@ -11,4 +11,4 @@ COPY results-2026-05-27.json dub_turkey_all_results.json dub_turkey_saw_ayt.json
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
