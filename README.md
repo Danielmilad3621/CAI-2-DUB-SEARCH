@@ -327,7 +327,72 @@ click filter buttons every iteration).
 | `screenshots/return-egyptair.png` | Evidence: returning flights list, also EgyptAir nonstop. |
 | `README.md` | This file. |
 
-## 9. Background
+## 9. Deployment
+
+The app is split into a **static frontend** (Vercel) and a **long-running backend** (Docker on a VPS). They cannot be merged: the backend needs a persistent Firefox process and scans that run 5–90 minutes, both incompatible with serverless.
+
+### Environment variables
+
+| Side | Variable | Required | Description |
+|------|----------|----------|-------------|
+| Frontend (Vercel) | `VITE_API_BASE_URL` | Yes (prod) | Full URL of the backend, e.g. `https://api.yourdomain.com`. Omit in local dev — Vite's proxy handles `/api` automatically. |
+| Backend (Docker) | `ALLOWED_ORIGINS` | Yes (prod) | Comma-separated list of allowed CORS origins, e.g. `https://your-app.vercel.app`. Defaults to `http://localhost:5173,http://127.0.0.1:5173`. |
+| Backend (Docker) | `PORT` | No | Uvicorn listen port. Defaults to `8000`. |
+| Backend (Docker) | `CURRENCY` | No | Default currency code passed to scrapers. Currently hardcoded to `EUR` per scanner config — this is a placeholder for a future flag. |
+
+> **Limitations (v1):** Job state is in-process memory. A backend restart loses any running job. Only one scan can run at a time. A future version could back jobs with SQLite or Redis.
+
+---
+
+### 9.1 Deploy the frontend to Vercel
+
+1. Push the repo to GitHub (or connect the existing remote).
+2. Create a new Vercel project and set **Root Directory** to `frontend/`.
+3. Vercel auto-detects Vite; the `frontend/vercel.json` in this repo sets the build command, output dir, and SPA rewrite.
+4. Add the environment variable `VITE_API_BASE_URL` = `https://<your-backend-host>` in the Vercel dashboard under **Settings → Environment Variables**.
+5. Redeploy (or let Vercel trigger on the next push).
+
+### 9.2 Deploy the backend to Hostinger VPS (Docker)
+
+```bash
+# 1. Copy the repo to the VPS (first time)
+scp -r /path/to/CAI-2-DUB-SEARCH root@<VPS_IP>:/opt/dub-search
+
+# 2. SSH in
+ssh root@<VPS_IP>
+
+# 3. Set the CORS origin (replace with your actual Vercel URL)
+export ALLOWED_ORIGINS="https://your-app.vercel.app"
+
+# 4. Build and start
+cd /opt/dub-search
+docker compose up -d --build
+
+# 5. Verify
+curl http://localhost:8000/api/health
+# → {"status":"ok"}
+```
+
+To update after code changes:
+```bash
+git pull
+docker compose up -d --build
+```
+
+**Alternatives to Hostinger VPS:** Render, Railway, and Fly.io can all run this Docker image. The only requirement is a long-lived container with port 8000 exposed; no special storage is needed.
+
+### 9.3 Local development
+
+```bash
+# Start backend + frontend dev server (Vite proxies /api → localhost:8000)
+bash scripts/dev.sh
+```
+
+Frontend: http://localhost:5173 — Backend: http://localhost:8000
+
+---
+
+## 10. Background
 
 Originally built as a one-off task in a Webwright-style Playwright workspace,
 then parameterized into the CLI shipped here. See commit history for the
