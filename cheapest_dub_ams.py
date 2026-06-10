@@ -11,6 +11,11 @@ and applies two byte-level transformations:
    protobuf length prefix of each leg message).
 2. Replace the destination IATA (CAI -> AMS).
 
+This script is now a thin CLI shim over the shared engine (app/engine.py); the
+route is defined in app/route_defs.py. CLI flags, stdout format and the legacy
+module-level helpers are preserved. Note: the API pins this route to a daily
+window, but the CLI still honors --weekdays (legacy behavior).
+
 Usage:
     python cheapest_dub_ams.py
     python cheapest_dub_ams.py --start 2026-09-01 --window-days 90
@@ -33,152 +38,41 @@ Dependencies: playwright (with `playwright install firefox`).
 from __future__ import annotations
 
 import argparse
-import base64
+import dataclasses
 import datetime as dt
 import json
-import re
 import sys
 from pathlib import Path
 
-from playwright.sync_api import sync_playwright
-
-FIREFOX_PREFS = {
-    # Bypass corporate DNS via direct-IP DoH endpoint.
-    "network.trr.mode": 3,
-    "network.trr.uri": "https://1.1.1.1/dns-query",
-    "network.trr.bootstrapAddress": "1.1.1.1",
-    "network.trr.confirmationNS": "skip",
-}
-
-# Original DUB -> CAI EgyptAir captured tfs (seed dates 2026-06-13 / 2026-06-18).
-BASE_TFS = (
-    "CBwQAhonEgoyMDI2LTA2LTEzMgJNU2oMCAISCC9tLzAyY2Z0cgcIARIDQ0FJ"
-    "GicSCjIwMjYtMDYtMTgyAk1TagcIARIDQ0FJcgwIAhIIL20vMDJjZnRAAUgB"
-    "cAGCAQsI____________AZgBAQ"
+from app import engine
+from app.engine import (  # noqa: F401  (legacy re-exports)
+    BASE_RAW_NO_AIRLINE,
+    BASE_TFS,
+    FIREFOX_PREFS,
+    SEED_DEP,
+    SEED_RET,
+    _b64u_decode,
+    _b64u_encode,
+    _parse_weekdays,
+    _reject_consent,
+    _valid_days,
+    strip_airline_filter,
 )
-SEED_DEP = b"2026-06-13"
-SEED_RET = b"2026-06-18"
+from app.jobs import JobStatus, ScanJob
+from app.route_defs import BUILTIN_ROUTES
 
-
-def _b64u_decode(s: str) -> bytes:
-    return base64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
-
-
-def _b64u_encode(b: bytes) -> str:
-    return base64.urlsafe_b64encode(b).decode().rstrip("=")
-
-
-def strip_airline_filter(raw: bytes, airline_iata: bytes = b"MS") -> bytes:
-    """Remove `\\x32\\x02<iata>` from each leg block and decrement the leg length.
-
-    Protobuf structure (in this captured blob):
-      \\x1a<len><leg-bytes>   -- repeated for outbound + return
-    The airline filter `\\x32\\x02MS` is 4 bytes inside <leg-bytes>.
-    Leg lengths are single-byte varints (< 128), so adjusting is trivial.
-    """
-    pattern = b"\x32\x02" + airline_iata  # 4 bytes
-    out = bytearray()
-    i = 0
-    while i < len(raw):
-        # `\x1a` = field 3 (leg), wire type 2 (length-delimited).
-        if raw[i] == 0x1A and i + 1 < len(raw):
-            leg_len = raw[i + 1]
-            if leg_len < 0x80:  # single-byte varint length
-                leg = raw[i + 2 : i + 2 + leg_len]
-                if pattern in leg:
-                    new_leg = leg.replace(pattern, b"", 1)
-                    out.append(0x1A)
-                    out.append(len(new_leg))
-                    out.extend(new_leg)
-                    i = i + 2 + leg_len
-                    continue
-        out.append(raw[i])
-        i += 1
-    return bytes(out)
-
-
-# Pre-strip the airline filter once.
-BASE_RAW_NO_AIRLINE = strip_airline_filter(_b64u_decode(BASE_TFS), b"MS")
+# The API route pins weekdays to daily; the CLI honors --weekdays instead.
+ROUTE = dataclasses.replace(BUILTIN_ROUTES["ams"], weekdays=None)
 
 
 def build_url(dep: dt.date, ret: dt.date, currency: str = "EUR") -> str:
     """Build a Google Flights URL for DUB -> AMS (any airline), dates swapped."""
-    # Swap destination IATA (appears twice: outbound dest + return origin).
-    raw = BASE_RAW_NO_AIRLINE.replace(b"CAI", b"AMS")
-    # Swap dates.
-    raw = raw.replace(SEED_DEP, dep.strftime("%Y-%m-%d").encode(), 1)
-    raw = raw.replace(SEED_RET, ret.strftime("%Y-%m-%d").encode(), 1)
-    return (
-        "https://www.google.com/travel/flights/search?"
-        f"tfs={_b64u_encode(raw)}&tfu=EgYIABAAGAA&hl=en&curr={currency}"
-    )
-
-
-def _reject_consent(page) -> None:
-    if "consent.google.com" in page.url:
-        page.get_by_role("button", name=re.compile(r"^Reject all$", re.I)).click(timeout=10000)
-        page.wait_for_load_state("domcontentloaded")
-        page.wait_for_timeout(2500)
-
-
-_WEEKDAY_MAP = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
-
-
-def _parse_weekdays(spec: str) -> set[int]:
-    out: set[int] = set()
-    for token in spec.split(","):
-        t = token.strip().title()[:3]
-        if t not in _WEEKDAY_MAP:
-            raise SystemExit(f"unknown weekday {token!r}")
-        out.add(_WEEKDAY_MAP[t])
-    return out
-
-
-def _valid_days(start: dt.date, end: dt.date, weekdays: set[int]):
-    d = start
-    while d <= end:
-        if d.weekday() in weekdays:
-            yield d
-        d += dt.timedelta(days=1)
+    return engine.build_url(dep, ret, dest="AMS", airline=None, currency=currency)
 
 
 def parse_results(page) -> dict:
     """Read the cheapest 'From X euros round trip total' price (any airline)."""
-    snap = page.locator("body").aria_snapshot()
-
-    entries: list[dict] = []
-    pattern = r"From\s+(\d[\d,]*)\s+euros round trip total\.([^\"]{0,500})"
-    for m in re.finditer(pattern, snap):
-        price = int(m.group(1).replace(",", ""))
-        snippet = m.group(0)
-        rest = m.group(2)
-
-        airline_match = re.search(
-            r"(?:flight|flights)\s+(?:with|operated by)\s+([A-Z][A-Za-z0-9 &\-\.]+?)\.", rest
-        )
-        airline = airline_match.group(1).strip() if airline_match else None
-
-        cls = next(
-            (c for c in ("Business Class", "Premium economy", "First Class") if c in snippet),
-            "Economy",
-        )
-        stops_match = re.search(r"(Nonstop|\d+\s+stops?)", rest)
-        stops = stops_match.group(0) if stops_match else None
-
-        entries.append(
-            {
-                "price": price,
-                "airline": airline,
-                "stops": stops,
-                "class": cls,
-                "snippet_head": snippet[:280],
-            }
-        )
-
-    return {
-        "min_price": min((e["price"] for e in entries), default=None),
-        "entries": entries[:5],
-    }
+    return engine.parse_results(page)
 
 
 def main(argv=None) -> int:
@@ -197,16 +91,16 @@ def main(argv=None) -> int:
     end = start + dt.timedelta(days=args.window_days)
     weekdays = _parse_weekdays(args.weekdays)
 
+    config = {
+        "start": args.start,
+        "window_days": args.window_days,
+        "min_trip_days": args.min_trip_days,
+        "max_trip_days": args.max_trip_days,
+        "weekdays": args.weekdays,
+        "currency": args.currency,
+    }
     deps = list(_valid_days(start + dt.timedelta(days=1), end, weekdays))
-    pairs = [
-        (dep, ret)
-        for dep in deps
-        for ret in _valid_days(
-            dep + dt.timedelta(days=args.min_trip_days),
-            dep + dt.timedelta(days=args.max_trip_days),
-            weekdays,
-        )
-    ]
+    pairs = engine.enumerate_pairs(ROUTE, config)
 
     print(
         f"Scanning {len(pairs)} pairs ({len(deps)} departures × valid returns), "
@@ -215,43 +109,26 @@ def main(argv=None) -> int:
         flush=True,
     )
 
-    results = []
-    with sync_playwright() as p:
-        browser = p.firefox.launch(headless=not args.headed, firefox_user_prefs=FIREFOX_PREFS)
-        ctx = browser.new_context(viewport={"width": 1280, "height": 1800}, locale="en-IE")
-        page = ctx.new_page()
+    job = ScanJob(id="cli", scanner=ROUTE.id, status=JobStatus.RUNNING, total=len(pairs))
+    counter = {"i": 0}
 
-        page.goto("https://www.google.com/travel/flights?hl=en&curr=" + args.currency,
-                  wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(2500)
-        _reject_consent(page)
+    def on_result(row: dict) -> None:
+        counter["i"] += 1
+        i = counter["i"]
+        if row.get("error"):
+            print(f"  #{i} nav error {row['dep']}->{row['ret']}: {row['error']}", flush=True)
+            return
+        top = (row["entries"] or [{}])[0]
+        print(
+            f"  #{i}/{len(pairs)}  {row['dep']} ({row['dep_wd']}) → {row['ret']} ({row['ret_wd']})  "
+            f"{row['trip_days']}d  →  €{row['min_price']}  ({top.get('airline', '?')})",
+            flush=True,
+        )
 
-        for i, (dep, ret) in enumerate(pairs, start=1):
-            url = build_url(dep, ret, currency=args.currency)
-            try:
-                page.goto(url, wait_until="domcontentloaded", timeout=45000)
-            except Exception as e:
-                print(f"  #{i} nav error {dep}->{ret}: {e}", flush=True)
-                continue
-            page.wait_for_timeout(2500)
-            data = parse_results(page)
-            top = (data["entries"] or [{}])[0]
-            data.update(
-                dep=dep.isoformat(),
-                ret=ret.isoformat(),
-                dep_wd=dep.strftime("%a"),
-                ret_wd=ret.strftime("%a"),
-                trip_days=(ret - dep).days,
-                url=url,
-            )
-            results.append(data)
-            print(
-                f"  #{i}/{len(pairs)}  {dep} ({data['dep_wd']}) → {ret} ({data['ret_wd']})  "
-                f"{data['trip_days']}d  →  €{data['min_price']}  ({top.get('airline', '?')})",
-                flush=True,
-            )
-
-        browser.close()
+    engine.run_scan(
+        ROUTE, job, lambda: False, config, headless=not args.headed, on_result=on_result
+    )
+    results = job.results
 
     Path(args.output).write_text(json.dumps(results, indent=2))
 
