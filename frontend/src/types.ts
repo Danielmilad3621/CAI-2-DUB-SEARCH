@@ -1,5 +1,3 @@
-export type ScannerId = 'turkey' | 'egyptair'
-
 export type JobStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'
 
 export interface FlightEntry {
@@ -27,7 +25,7 @@ export interface FlightResult {
 
 export interface ScanJob {
   id: string
-  scanner: ScannerId
+  route_id: string
   status: JobStatus
   total: number
   done: number
@@ -40,14 +38,25 @@ export interface ScanJob {
   top_results: FlightResult[]
 }
 
-export interface ScannerInfo {
-  id: ScannerId
+export interface RouteInfo {
+  id: string
   name: string
   subtitle: string
   origin: string
+  destinations: string[]
   default_dest: string
+  airline: string | null
+  airline_name: string | null
+  date_strategy: 'window' | 'fixed_pairs'
+  weekdays: string | null
+  configurable_destinations: boolean
   eta_minutes: number
-  combinations: number
+  combinations: number | null
+  builtin: boolean
+  /** false = user-created, lives in the container only: lost on the next backend redeploy. */
+  persistent: boolean
+  /** Origin is pinned to DUB until the tfs= URL builder lands (Phase 4). */
+  origin_locked: boolean
 }
 
 export interface SavedTrip {
@@ -62,12 +71,22 @@ export interface SavedTrip {
 }
 
 export interface ScanCreatePayload {
-  scanner: ScannerId
+  route_id: string
   destinations?: string
   currency?: string
   start?: string
   window_days?: number
   min_trip_days?: number
   max_trip_days?: number
+  weekdays?: string
+}
+
+export interface RouteCreatePayload {
+  destinations: string
+  id?: string
+  name?: string
+  subtitle?: string
+  airline?: string
+  airline_name?: string
   weekdays?: string
 }

@@ -1,4 +1,10 @@
-import type { SavedTrip, ScanCreatePayload, ScanJob, ScannerInfo } from '../types'
+import type {
+  RouteCreatePayload,
+  RouteInfo,
+  SavedTrip,
+  ScanCreatePayload,
+  ScanJob,
+} from '../types'
 
 const BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api') as string
 
@@ -23,8 +29,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export function getScanners() {
-  return request<ScannerInfo[]>('/scanners')
+export function getRoutes() {
+  return request<RouteInfo[]>('/routes')
+}
+
+export function createRoute(body: RouteCreatePayload) {
+  return request<RouteInfo>('/routes', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
 }
 
 export function getSavedTrips() {
