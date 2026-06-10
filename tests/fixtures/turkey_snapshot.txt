@@ -1,0 +1,213 @@
+- banner:
+  - button "Main menu":
+    - img
+  - link "Google":
+    - /url: /
+  - button "Skip to main content"
+  - button "Accessibility feedback"
+  - navigation:
+    - link "Travel":
+      - img
+      - text: Travel
+    - link "Explore":
+      - img
+      - text: Explore
+    - link "Flights":
+      - img
+      - text: Flights
+    - link "Hotels":
+      - img
+      - text: Hotels
+    - link "Vacation rentals":
+      - img
+      - text: Vacation rentals
+  - button "Change appearance":
+    - img
+  - button "Google apps"
+  - link "Sign in":
+    - /url: https://accounts.google.com/ServiceLogin?service=searchandassistant&passive=1209600&continue=https://www.google.com/travel/flights/search?tfs%3DCBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNJU1QaIxIKMjAyNi0wOC0wM2oHCAESA0lTVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE%26tfu%3DEgYIABAAGAA%26hl%3Den%26curr%3DEUR&followup=https://www.google.com/travel/flights/search?tfs%3DCBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNJU1QaIxIKMjAyNi0wOC0wM2oHCAESA0lTVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE%26tfu%3DEgYIABAAGAA%26hl%3Den%26curr%3DEUR&hl=en&ec=GAZAlQM
+- search:
+  - heading "Flight search" [level=1]
+  - combobox "Change ticket type. Round trip"
+  - button "1 passenger, change number of passengers.":
+    - img
+    - text: "1"
+    - img
+  - combobox "Change seating class. Economy"
+  - combobox "Where from?": Dublin
+  - img
+  - button "Swap origin and destination.":
+    - img
+  - combobox "Where to? Istanbul IST": Istanbul
+  - img
+  - img
+  - textbox "Departure": Fri, Jul 31
+  - textbox "Return": Mon, Aug 3
+  - heading "Filters" [level=2]
+  - button "All filters":
+    - img
+    - text: All filters
+  - button "Stops, Not selected": Stops
+  - button "Airlines, Not selected": Airlines
+  - button "Bags, Not selected": Bags
+  - button "Price, Not selected": Price
+  - button "Times, Not selected": Times
+  - button "Emissions, Not selected": Emissions
+  - button "Connecting airports, Not selected": Connecting airports
+  - button "Duration, Not selected": Duration
+- main:
+  - heading "Search results" [level=2]
+  - alert: 9 results returned.
+  - tablist:
+    - tab "BestLearn more about ranking" [selected]:
+      - text: Best
+      - button "Learn more about ranking":
+        - img
+    - tab "Cheapest from 375 euros Learn more about ranking":
+      - text: Cheapest from €375
+      - button "Learn more about ranking":
+        - img
+  - tabpanel "BestLearn more about ranking":
+    - heading "Top departing flights" [level=3]
+    - text: Ranked based on price and convenience
+    - button "Learn more about ranking":
+      - img
+    - text: Prices include required taxes + fees for 1 adult. Optional charges and
+    - button "bag fees"
+    - text: may apply.
+    - button "Passenger assistance"
+    - text: info.
+    - button "Sorted by top flights, Change sort order.":
+      - text: Sorted by top flights
+      - img
+    - list:
+      - listitem:
+        - link "From 435 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 4:55 PM on Friday, July 31. Total duration 6 hr 10 min. Layover (1 of 1) is a 1 hr layover at Frankfurt Airport in Frankfurt am Main. Select flight"
+        - text: 8:45 AM – 4:55 PM Lufthansa 6 hr 10 min 1 stop 1 hr FRA
+        - 'button "Carbon emissions estimate: 279 kilograms. +12% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €435 round trip
+        - button "Flight details. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 4:55 PM on Friday, July 31.":
+          - img
+      - listitem:
+        - link "From 511 euros round trip total. Nonstop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Friday, July 31 and arrives at Istanbul Airport at 12:05 PM on Friday, July 31. Total duration 4 hr 30 min. Select flight"
+        - text: 5:35 AM – 12:05 PM Turkish Airlines 4 hr 30 min Nonstop
+        - 'button "Carbon emissions estimate: 264 kilograms. +6% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €511 round trip
+        - button "Flight details. Leaves Dublin Airport at 5:35 AM on Friday, July 31 and arrives at Istanbul Airport at 12:05 PM on Friday, July 31.":
+          - img
+      - listitem:
+        - link "From 564 euros round trip total. Nonstop flight with Turkish Airlines. Leaves Dublin Airport at 10:40 AM on Friday, July 31 and arrives at Istanbul Airport at 5:10 PM on Friday, July 31. Total duration 4 hr 30 min. Select flight"
+        - text: 10:40 AM – 5:10 PM Turkish Airlines 4 hr 30 min Nonstop
+        - 'button "Carbon emissions estimate: 224 kilograms. -10% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €564 round trip
+        - button "Flight details. Leaves Dublin Airport at 10:40 AM on Friday, July 31 and arrives at Istanbul Airport at 5:10 PM on Friday, July 31.":
+          - img
+    - heading "Price insights" [level=3]
+    - heading "Prices are currently typical" [level=4]
+    - button "View price history":
+      - img
+    - region "Find the best price":
+      - img
+      - heading "Track prices" [level=2]
+      - button "Learn more about tracked prices":
+        - link "Learn more about tracked prices":
+          - img
+      - text: Track prices from Dublin to Istanbul departing 2026-07-31 and returning 2026-08-03
+      - switch "Track prices from Dublin to Istanbul departing 2026-07-31 and returning 2026-08-03":
+        - img
+        - img
+      - text: Track prices from Dublin to Istanbul - Any dates
+      - switch "Track prices from Dublin to Istanbul - Any dates":
+        - img
+        - img
+      - button "Date grid":
+        - img
+        - text: Date grid
+      - button "Price graph":
+        - img
+        - text: Price graph
+    - heading "Other departing flights" [level=3]
+    - list:
+      - listitem:
+        - link "From 375 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31. Total duration 10 hr 50 min. Layover (1 of 1) is a 5 hr 40 min layover at Frankfurt Airport in Frankfurt am Main. Select flight"
+        - text: 8:45 AM – 9:35 PM Lufthansa 10 hr 50 min 1 stop 5 hr 40 min FRA
+        - 'button "Carbon emissions estimate: 249 kilograms. Average emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €375 round trip
+        - button "Flight details. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31.":
+          - img
+      - listitem:
+        - link "From 475 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 12:25 PM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31. Total duration 7 hr 10 min. Layover (1 of 1) is a 2 hr layover at Frankfurt Airport in Frankfurt am Main. Select flight"
+        - text: 12:25 PM – 9:35 PM Lufthansa 7 hr 10 min 1 stop 2 hr FRA
+        - 'button "Carbon emissions estimate: 249 kilograms. Average emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €475 round trip
+        - button "Flight details. Leaves Dublin Airport at 12:25 PM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31.":
+          - img
+      - listitem:
+        - link "From 484 euros round trip total. 1 stop flight with Lufthansa City Airlines and Lufthansa. Leaves Dublin Airport at 5:45 PM on Friday, July 31 and arrives at Istanbul Airport at 2:05 AM on Saturday, August 1. Total duration 6 hr 20 min. Layover (1 of 1) is a 1 hr 25 min layover at Munich International Airport in Munich. Select flight"
+        - text: 5:45 PM – 2:05 AM+1 Lufthansa City Airlines, Lufthansa 6 hr 20 min 1 stop 1 hr 25 min MUC
+        - 'button "Carbon emissions estimate: 232 kilograms. -7% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €484 round trip
+        - button "Flight details. Leaves Dublin Airport at 5:45 PM on Friday, July 31 and arrives at Istanbul Airport at 2:05 AM on Saturday, August 1.":
+          - img
+      - listitem:
+        - link "From 493 euros round trip total. 2 stops flight with SWISS and Aegean. Leaves Dublin Airport at 6:35 PM on Friday, July 31 and arrives at Istanbul Airport at 9:45 AM on Saturday, August 1. Total duration 13 hr 10 min. Layover (1 of 2) is a 55 min layover at Zurich Airport in Zürich. Layover (2 of 2) is a 5 hr 55 min overnight layover at Athens International Airport \"Eleftherios Venizelos\" in Athens. Select flight"
+        - text: 6:35 PM – 9:45 AM+1 SWISS, Aegean 13 hr 10 min 2 stops ZRH, ATH
+        - 'button "Carbon emissions estimate: 344 kilograms. +38% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €493 round trip
+        - button "Flight details. Leaves Dublin Airport at 6:35 PM on Friday, July 31 and arrives at Istanbul Airport at 9:45 AM on Saturday, August 1.":
+          - img
+      - listitem:
+        - link "From 564 euros round trip total. Nonstop flight with Turkish Airlines. Leaves Dublin Airport at 5:05 PM on Friday, July 31 and arrives at Istanbul Airport at 11:35 PM on Friday, July 31. Total duration 4 hr 30 min. Select flight"
+        - text: 5:05 PM – 11:35 PM Turkish Airlines 4 hr 30 min Nonstop
+        - 'button "Carbon emissions estimate: 224 kilograms. -10% emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €564 round trip
+        - button "Flight details. Leaves Dublin Airport at 5:05 PM on Friday, July 31 and arrives at Istanbul Airport at 11:35 PM on Friday, July 31.":
+          - img
+      - listitem:
+        - link "From 604 euros round trip total. 1 stop flight with KLM. Operated by KLM Cityhopper. Leaves Dublin Airport at 5:20 PM on Friday, July 31 and arrives at Istanbul Airport at 1:20 AM on Saturday, August 1. Total duration 6 hr. Layover (1 of 1) is a 1 hr 5 min layover at Amsterdam Airport Schiphol in Amsterdam. Select flight"
+        - text: 5:20 PM – 1:20 AM+1 KLM·Operated by KLM Cityhopper 6 hr 1 stop 1 hr 5 min AMS
+        - 'button "Carbon emissions estimate: 238 kilograms. Average emissions. Learn more about this emissions estimate"':
+          - img
+        - text: €604 round trip
+        - button "Flight details. Leaves Dublin Airport at 5:20 PM on Friday, July 31 and arrives at Istanbul Airport at 1:20 AM on Saturday, August 1.":
+          - img
+      - listitem:
+        - button "View more flights":
+          - img
+- contentinfo:
+  - button "Language·English (United States)":
+    - img
+    - text: Language·English (United States)
+  - button "Location·Ireland":
+    - img
+    - text: Location·Ireland
+  - button "Currency EUR":
+    - img
+  - link "About Google Travel":
+    - /url: https://about.google/?hl=en-US
+    - text: About
+  - link "Privacy":
+    - /url: https://policies.google.com/privacy?hl=en-US
+  - link "Terms":
+    - /url: https://policies.google.com/terms?hl=en-US
+  - link "Join user studies":
+    - /url: https://google.qualtrics.com/jfe/form/SV_3NMIMtX0F2zkakR?reserved%3D1%26utm_source%3DFooter%2520link%26utm_medium%3Down_web%26%20utm_campaign%3DQ2%26productTag%3D0%26campaignDate%3DApril2020%26referral_code%3DUXbJ377133&Q_Language=en-US
+  - button "Report Illegal Content"
+  - link "Feedback":
+    - /url: ./#0
+  - link "Help Center and Consumer Information":
+    - /url: https://support.google.com/travel/?hl=en-US#topic=2475360
+  - paragraph:
+    - text: Displayed currencies may differ from the currencies used to purchase flights.
+    - link "Learn more about currencies":
+      - /url: https://www.google.com/googlefinance/disclaimer?hl=en-US&gl=IE
+      - text: Learn more
+  - paragraph: Prices are final prices and include all taxes and fees, including payment fees for the cheapest common payment method (which may differ depending on the provider). Additional charges may apply for other types of payment, luggage, meals, WLAN or other additional services. Prices, availability and travel details are provided based on the latest information received from our partners. This information is reflected in the results within a period of less than 24 hours. Additional conditions may also be applied by our partners. You should then check prices and conditions with the services providers before booking.

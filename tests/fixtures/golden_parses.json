@@ -1,0 +1,116 @@
+{
+ "generated_from_commit": "1848d25a261b24f8fe20a7ed056dda57e3f92e97",
+ "captured_at": "2026-06-10T11:34:39",
+ "note": "Legacy parser outputs on the saved snapshots. Do not regenerate after the engine refactor.",
+ "routes": {
+  "egyptair": {
+   "fixture": "egyptair_snapshot.txt",
+   "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI2LTA2LTEzMgJNU2oMCAISCC9tLzAyY2Z0cgcIARIDQ0FJGicSCjIwMjYtMDYtMjAyAk1TagcIARIDQ0FJcgwIAhIIL20vMDJjZnRAAUgBcAGCAQsI____________AZgBAQ&tfu=EgYIABAAGAA&hl=en&curr=EUR",
+   "parser": "cheapest_dub_cai_egyptair.parse_results (airline_name='EgyptAir')",
+   "attempts": 1,
+   "parsed": {
+    "cheapest_tab": null,
+    "min_price": 893,
+    "entries": [
+     {
+      "price": 893,
+      "class": null,
+      "snippet": "From 893 euros round trip total. Nonstop flight with EgyptAir. Leaves Dublin Airport at 2:20 PM on Saturday, June 13 and arrives at Cairo International Airport at 9:45 PM on Saturday, June 13. Total duration 5 hr 25 min. Select flight"
+     }
+    ]
+   }
+  },
+  "turkey": {
+   "fixture": "turkey_snapshot.txt",
+   "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA3LTMxagwIAhIIL20vMDJjZnRyBwgBEgNJU1QaIxIKMjAyNi0wOC0wM2oHCAESA0lTVHIMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR",
+   "parser": "cheapest_dub_turkey.parse_results (any airline)",
+   "attempts": 1,
+   "parsed": {
+    "min_price": 375,
+    "entries": [
+     {
+      "price": 435,
+      "airline": "Lufthansa",
+      "stops": "1 stop",
+      "class": "Economy",
+      "snippet_head": "From 435 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 4:55 PM on Friday, July 31. Total duration 6 hr 10 min. Layover (1 of 1) is a 1 hr layover at Frankfurt Airport in Frankfurt am Ma"
+     },
+     {
+      "price": 511,
+      "airline": "Turkish Airlines",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 511 euros round trip total. Nonstop flight with Turkish Airlines. Leaves Dublin Airport at 5:35 AM on Friday, July 31 and arrives at Istanbul Airport at 12:05 PM on Friday, July 31. Total duration 4 hr 30 min. Select flight"
+     },
+     {
+      "price": 564,
+      "airline": "Turkish Airlines",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 564 euros round trip total. Nonstop flight with Turkish Airlines. Leaves Dublin Airport at 10:40 AM on Friday, July 31 and arrives at Istanbul Airport at 5:10 PM on Friday, July 31. Total duration 4 hr 30 min. Select flight"
+     },
+     {
+      "price": 375,
+      "airline": "Lufthansa",
+      "stops": "1 stop",
+      "class": "Economy",
+      "snippet_head": "From 375 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 8:45 AM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31. Total duration 10 hr 50 min. Layover (1 of 1) is a 5 hr 40 min layover at Frankfurt Airport in Frankfu"
+     },
+     {
+      "price": 475,
+      "airline": "Lufthansa",
+      "stops": "1 stop",
+      "class": "Economy",
+      "snippet_head": "From 475 euros round trip total. 1 stop flight with Lufthansa. Leaves Dublin Airport at 12:25 PM on Friday, July 31 and arrives at Istanbul Airport at 9:35 PM on Friday, July 31. Total duration 7 hr 10 min. Layover (1 of 1) is a 2 hr layover at Frankfurt Airport in Frankfurt am M"
+     }
+    ]
+   }
+  },
+  "ams": {
+   "fixture": "ams_snapshot.txt",
+   "url": "https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI2LTA2LTIwagwIAhIIL20vMDJjZnRyBwgBEgNBTVMaIxIKMjAyNi0wNi0yN2oHCAESA0FNU3IMCAISCC9tLzAyY2Z0QAFIAXABggELCP___________wGYAQE&tfu=EgYIABAAGAA&hl=en&curr=EUR",
+   "parser": "cheapest_dub_ams.parse_results (any airline)",
+   "attempts": 1,
+   "parsed": {
+    "min_price": 242,
+    "entries": [
+     {
+      "price": 242,
+      "airline": "KLM",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 242 euros round trip total. Nonstop flight with KLM. Operated by KLM Cityhopper. Leaves Dublin Airport at 1:25 PM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 4:00 PM on Saturday, June 20. Total duration 1 hr 35 min. Select flight"
+     },
+     {
+      "price": 247,
+      "airline": "KLM",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 247 euros round trip total. Nonstop flight with KLM. Leaves Dublin Airport at 5:55 AM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 8:30 AM on Saturday, June 20. Total duration 1 hr 35 min. Select flight"
+     },
+     {
+      "price": 252,
+      "airline": "KLM",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 252 euros round trip total. Nonstop flight with KLM. Operated by KLM Cityhopper. Leaves Dublin Airport at 5:20 PM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 7:55 PM on Saturday, June 20. Total duration 1 hr 35 min. Select flight"
+     },
+     {
+      "price": 323,
+      "airline": "Aer Lingus",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 323 euros round trip total. Nonstop flight with Aer Lingus. Leaves Dublin Airport at 2:40 PM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 5:25 PM on Saturday, June 20. Total duration 1 hr 45 min. Select flight"
+     },
+     {
+      "price": 278,
+      "airline": "KLM",
+      "stops": "Nonstop",
+      "class": "Economy",
+      "snippet_head": "From 278 euros round trip total. Nonstop flight with KLM. Leaves Dublin Airport at 11:10 AM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 1:45 PM on Saturday, June 20. Total duration 1 hr 35 min. Select flight"
+     }
+    ]
+   }
+  }
+ }
+}
