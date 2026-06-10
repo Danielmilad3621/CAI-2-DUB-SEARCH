@@ -1,9 +1,9 @@
-"""API surface tests for the Phase-2 route registry endpoints.
+"""API surface tests for the route registry endpoints.
 
-Covers: GET /api/routes metadata, the byte-stable legacy GET /api/scanners,
-POST/DELETE /api/routes validation + protection, and POST /api/scans
-accepting both route_id and the deprecated scanner alias (worker function
-monkeypatched — no browser is launched).
+Covers: GET /api/routes metadata, POST/DELETE /api/routes validation +
+protection, and POST /api/scans with route_id (worker function
+monkeypatched — no browser is launched). The deprecated scanner alias and
+GET /api/scanners were removed after the dynamic frontend shipped.
 
 Run standalone (no pytest needed):  .venv/bin/python tests/test_api_routes.py
 Or via pytest:                      pytest tests/test_api_routes.py
@@ -26,16 +26,6 @@ from app.jobs import store  # noqa: E402
 from app.registry import registry  # noqa: E402
 
 client = TestClient(main.app)
-
-# GET /api/scanners must stay byte-stable until Phase 3 removes it.
-LEGACY_SCANNERS = [
-    {"id": "turkey", "name": "Dublin → Turkey", "subtitle": "Aug 2026 weekends · IST, SAW, AYT",
-     "origin": "DUB", "default_dest": "IST", "eta_minutes": 5, "combinations": 36},
-    {"id": "egyptair", "name": "Dublin → Cairo", "subtitle": "EgyptAir only · Sat/Sun/Tue/Thu",
-     "origin": "DUB", "default_dest": "CAI", "eta_minutes": 30, "combinations": 245},
-    {"id": "ams", "name": "Dublin → Amsterdam", "subtitle": "All airlines · daily",
-     "origin": "DUB", "default_dest": "AMS", "eta_minutes": 90, "combinations": 720},
-]
 
 
 class _isolated_user_routes:
@@ -71,8 +61,8 @@ def _wait_done(job_id: str, timeout: float = 5.0) -> str:
     raise AssertionError("scan did not finish in time")
 
 
-def test_legacy_scanners_endpoint_unchanged() -> None:
-    assert client.get("/api/scanners").json() == LEGACY_SCANNERS
+def test_legacy_scanners_endpoint_removed() -> None:
+    assert client.get("/api/scanners").status_code in (404, 405)
 
 
 def test_list_routes_metadata() -> None:
@@ -129,29 +119,30 @@ def test_delete_builtin_forbidden() -> None:
     assert client.delete("/api/routes/egyptair").status_code == 403
 
 
-def test_scan_accepts_route_id_and_scanner_alias() -> None:
+def test_scan_requires_route_id() -> None:
     with _isolated_user_routes():
         original = main.run_job
         main.run_job = _fake_run_job
         try:
-            # deprecated alias
-            resp = client.post("/api/scans", json={"scanner": "turkey"})
+            resp = client.post("/api/scans", json={"route_id": "turkey"})
             assert resp.status_code == 200, resp.text
             job = resp.json()
-            assert job["scanner"] == "turkey" and job["route_id"] == "turkey"
+            assert job["route_id"] == "turkey"
+            assert "scanner" not in job  # alias gone from job payloads
             assert job["total"] == 36
             assert _wait_done(job["id"]) == "completed"
 
-            # new field, user-created route
+            # user-created route
             client.post("/api/routes", json={"destinations": "CDG"})
             resp = client.post("/api/scans", json={"route_id": "cdg", "window_days": 14})
             assert resp.status_code == 200, resp.text
             job = resp.json()
             assert job["route_id"] == "cdg"
             assert _wait_done(job["id"]) == "completed"
-            assert store.get(job["id"]).config["scanner"] == "cdg"  # alias mirrored in config
+            assert store.get(job["id"]).config["route_id"] == "cdg"
 
-            # neither field → 422; unknown → 404
+            # removed alias is rejected, missing route_id → 422; unknown → 404
+            assert client.post("/api/scans", json={"scanner": "turkey"}).status_code == 422
             assert client.post("/api/scans", json={}).status_code == 422
             assert client.post("/api/scans", json={"route_id": "nope"}).status_code == 404
         finally:

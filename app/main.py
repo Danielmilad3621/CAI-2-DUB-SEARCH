@@ -44,8 +44,7 @@ app.add_middleware(
 
 
 class ScanCreate(BaseModel):
-    route_id: str | None = None
-    scanner: str | None = None  # deprecated alias of route_id (removed in Phase 3)
+    route_id: str
     destinations: str = "IST,SAW,AYT"
     currency: str = "EUR"
     start: str | None = None
@@ -72,48 +71,9 @@ class RouteCreate(BaseModel):
     configurable_destinations: bool = False
 
 
-# Deprecated: legacy display list served by GET /api/scanners so a mid-rollout
-# frontend keeps working. GET /api/routes (registry-backed) replaces it; both
-# this list and the endpoint are removed in Phase 3's frontend commit.
-SCANNERS = [
-    {
-        "id": "turkey",
-        "name": "Dublin → Turkey",
-        "subtitle": "Aug 2026 weekends · IST, SAW, AYT",
-        "origin": "DUB",
-        "default_dest": "IST",
-        "eta_minutes": 5,
-        "combinations": 36,
-    },
-    {
-        "id": "egyptair",
-        "name": "Dublin → Cairo",
-        "subtitle": "EgyptAir only · Sat/Sun/Tue/Thu",
-        "origin": "DUB",
-        "default_dest": "CAI",
-        "eta_minutes": 30,
-        "combinations": 245,
-    },
-    {
-        "id": "ams",
-        "name": "Dublin → Amsterdam",
-        "subtitle": "All airlines · daily",
-        "origin": "DUB",
-        "default_dest": "AMS",
-        "eta_minutes": 90,
-        "combinations": 720,
-    },
-]
-
-
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
-
-
-@app.get("/api/scanners")
-def list_scanners() -> list[dict[str, Any]]:
-    return SCANNERS
 
 
 def _route_entry_dict(entry: RouteEntry) -> dict[str, Any]:
@@ -197,15 +157,11 @@ def delete_route(route_id: str) -> dict[str, str]:
 
 @app.post("/api/scans")
 def create_scan(body: ScanCreate) -> dict[str, Any]:
-    route_id = body.route_id or body.scanner
-    if not route_id:
-        raise HTTPException(422, "route_id is required")
+    route_id = body.route_id
     if registry.get(route_id) is None:
         raise HTTPException(404, f"Unknown route: {route_id}")
 
     config = body.model_dump()
-    config["route_id"] = route_id
-    config["scanner"] = route_id  # deprecated alias kept for older clients
     try:
         total = estimate_total(route_id, config)
     except Exception as exc:
