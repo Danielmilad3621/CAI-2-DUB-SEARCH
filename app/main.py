@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +12,14 @@ from pydantic import BaseModel, Field
 
 from app.browser_env import prepare_playwright_browsers
 from app.jobs import JobStatus, store
+from app.registry import (
+    LOCKED_ORIGIN,
+    BuiltinProtected,
+    RegistryError,
+    RouteConflict,
+    RouteEntry,
+    registry,
+)
 from app.scanner import estimate_total, run_job
 
 prepare_playwright_browsers()
@@ -36,7 +44,8 @@ app.add_middleware(
 
 
 class ScanCreate(BaseModel):
-    scanner: Literal["turkey", "egyptair", "ams"]
+    route_id: str | None = None
+    scanner: str | None = None  # deprecated alias of route_id (removed in Phase 3)
     destinations: str = "IST,SAW,AYT"
     currency: str = "EUR"
     start: str | None = None
@@ -46,6 +55,26 @@ class ScanCreate(BaseModel):
     weekdays: str = "Sat,Sun,Tue,Thu"
 
 
+class RouteCreate(BaseModel):
+    """User-created routes are window-only and Dublin-origin-only (v1):
+    fixed_pairs date strategies stay built-in, and the origin is locked until
+    the tfs= builder replaces byte-patching (Phase 4)."""
+
+    destinations: list[str] | str
+    id: str | None = Field(default=None, max_length=32, pattern=r"^[a-z0-9][a-z0-9_-]*$")
+    name: str | None = Field(default=None, max_length=80)
+    subtitle: str | None = Field(default=None, max_length=120)
+    origin: str = LOCKED_ORIGIN
+    airline: str | None = Field(default=None, pattern=r"^[A-Z0-9]{2}$")
+    airline_name: str | None = Field(default=None, max_length=40)
+    weekdays: str | None = Field(default=None, max_length=40)
+    eta_minutes: int = Field(default=30, ge=1, le=600)
+    configurable_destinations: bool = False
+
+
+# Deprecated: legacy display list served by GET /api/scanners so a mid-rollout
+# frontend keeps working. GET /api/routes (registry-backed) replaces it; both
+# this list and the endpoint are removed in Phase 3's frontend commit.
 SCANNERS = [
     {
         "id": "turkey",
@@ -87,16 +116,103 @@ def list_scanners() -> list[dict[str, Any]]:
     return SCANNERS
 
 
+def _route_entry_dict(entry: RouteEntry) -> dict[str, Any]:
+    route = entry.route
+    try:
+        combinations = estimate_total(route.id, {"destinations": ",".join(route.destinations)})
+    except Exception:
+        combinations = None
+    return {
+        "id": route.id,
+        "name": route.name,
+        "subtitle": route.subtitle,
+        "origin": route.origin,
+        "destinations": list(route.destinations),
+        "default_dest": route.destinations[0],
+        "airline": route.airline,
+        "airline_name": route.airline_name,
+        "date_strategy": route.date_strategy,
+        "weekdays": route.weekdays,
+        "configurable_destinations": route.configurable_destinations,
+        "eta_minutes": route.eta_minutes,
+        "combinations": combinations,
+        "builtin": entry.builtin,
+        # User routes live in the container filesystem only: they survive a
+        # restart but are lost on the next image rebuild (until Phase 5).
+        "persistent": entry.persistent,
+        # URL generation byte-patches a captured Dublin blob (Phase 4 lifts this).
+        "origin_locked": True,
+    }
+
+
+@app.get("/api/routes")
+def list_routes() -> list[dict[str, Any]]:
+    return [_route_entry_dict(e) for e in registry.list_entries()]
+
+
+@app.post("/api/routes", status_code=201)
+def create_route(body: RouteCreate) -> dict[str, Any]:
+    if body.origin.strip().upper() != LOCKED_ORIGIN:
+        raise HTTPException(
+            400,
+            f"origin is locked to {LOCKED_ORIGIN} while URL generation byte-patches "
+            "a captured Dublin blob (Phase 4 unlocks arbitrary origins)",
+        )
+    try:
+        entry = registry.create(
+            destinations=body.destinations,
+            id=body.id,
+            name=body.name,
+            subtitle=body.subtitle,
+            airline=body.airline,
+            airline_name=body.airline_name,
+            weekdays=body.weekdays,
+            eta_minutes=body.eta_minutes,
+            configurable_destinations=body.configurable_destinations,
+        )
+    except RouteConflict as exc:
+        raise HTTPException(409, str(exc)) from exc
+    except RegistryError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    return _route_entry_dict(entry)
+
+
+@app.delete("/api/routes/{route_id}")
+def delete_route(route_id: str) -> dict[str, str]:
+    active = [
+        j
+        for j in store.list_jobs()
+        if j.scanner == route_id and j.status in (JobStatus.QUEUED, JobStatus.RUNNING)
+    ]
+    if active:
+        raise HTTPException(409, "route has a running scan; cancel it first")
+    try:
+        registry.delete(route_id)
+    except BuiltinProtected as exc:
+        raise HTTPException(403, str(exc)) from exc
+    except KeyError:
+        raise HTTPException(404, "Route not found") from None
+    return {"status": "deleted"}
+
+
 @app.post("/api/scans")
 def create_scan(body: ScanCreate) -> dict[str, Any]:
+    route_id = body.route_id or body.scanner
+    if not route_id:
+        raise HTTPException(422, "route_id is required")
+    if registry.get(route_id) is None:
+        raise HTTPException(404, f"Unknown route: {route_id}")
+
     config = body.model_dump()
+    config["route_id"] = route_id
+    config["scanner"] = route_id  # deprecated alias kept for older clients
     try:
-        total = estimate_total(body.scanner, config)
+        total = estimate_total(route_id, config)
     except Exception as exc:
         raise HTTPException(400, str(exc)) from exc
 
     try:
-        job = store.create(body.scanner, total, config)
+        job = store.create(route_id, total, config)
     except RuntimeError as exc:
         raise HTTPException(409, str(exc)) from exc
 

@@ -7,6 +7,7 @@ venv/
 frontend/node_modules/
 frontend/dist/
 results.json
+app/routes.user.json
 .env
 .env.*
 !.env.example

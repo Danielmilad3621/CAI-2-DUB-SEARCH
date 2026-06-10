@@ -3,7 +3,7 @@
 Thin adapter between the job store (app/jobs.py, called from app/main.py)
 and the generic engine (app/engine.py). The per-route run_* functions and
 pair-count duplicates that used to live here are gone — routes are looked up
-in app/route_defs.py and dispatched to engine.run_scan.
+in the registry (built-in + user-created) and dispatched to engine.run_scan.
 """
 
 from __future__ import annotations
@@ -13,11 +13,11 @@ from typing import Any
 
 from app.engine import Route, estimate_pairs, run_scan
 from app.jobs import ScanJob
-from app.route_defs import BUILTIN_ROUTES
+from app.registry import registry
 
 
 def _route(scanner: str) -> Route:
-    route = BUILTIN_ROUTES.get(scanner)
+    route = registry.get(scanner)
     if route is None:
         raise ValueError(f"Unknown scanner: {scanner}")
     return route

@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "note": "Built-in route registry. Loaded by app/registry.py; user-created routes live in app/routes.user.json (gitignored, container-local). Kept under app/ so the Dockerfile's `COPY app/ app/` ships it.",
+ "routes": [
+  {
+   "id": "turkey",
+   "name": "Dublin → Turkey",
+   "subtitle": "Aug 2026 weekends · IST, SAW, AYT",
+   "origin": "DUB",
+   "destinations": ["IST", "SAW", "AYT"],
+   "airline": null,
+   "airline_name": null,
+   "date_strategy": "fixed_pairs",
+   "weekdays": null,
+   "fixed_pairs": [
+    ["2026-07-31", "2026-08-03"],
+    ["2026-07-31", "2026-08-04"],
+    ["2026-08-01", "2026-08-03"],
+    ["2026-08-01", "2026-08-04"],
+    ["2026-08-07", "2026-08-09"],
+    ["2026-08-07", "2026-08-10"],
+    ["2026-08-14", "2026-08-16"],
+    ["2026-08-14", "2026-08-17"],
+    ["2026-08-21", "2026-08-23"],
+    ["2026-08-21", "2026-08-24"],
+    ["2026-08-28", "2026-08-30"],
+    ["2026-08-28", "2026-08-31"]
+   ],
+   "configurable_destinations": true,
+   "eta_minutes": 5
+  },
+  {
+   "id": "egyptair",
+   "name": "Dublin → Cairo",
+   "subtitle": "EgyptAir only · Sat/Sun/Tue/Thu",
+   "origin": "DUB",
+   "destinations": ["CAI"],
+   "airline": "MS",
+   "airline_name": "EgyptAir",
+   "date_strategy": "window",
+   "weekdays": null,
+   "fixed_pairs": [],
+   "configurable_destinations": false,
+   "eta_minutes": 30
+  },
+  {
+   "id": "ams",
+   "name": "Dublin → Amsterdam",
+   "subtitle": "All airlines · daily",
+   "origin": "DUB",
+   "destinations": ["AMS"],
+   "airline": null,
+   "airline_name": null,
+   "date_strategy": "window",
+   "weekdays": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+   "fixed_pairs": [],
+   "configurable_destinations": false,
+   "eta_minutes": 90
+  }
+ ]
+}

@@ -32,7 +32,8 @@ class ScanJob:
         priced.sort(key=lambda r: r["min_price"])
         return {
             "id": self.id,
-            "scanner": self.scanner,
+            "scanner": self.scanner,  # deprecated alias of route_id (removed in Phase 3)
+            "route_id": self.scanner,
             "status": self.status.value,
             "total": self.total,
             "done": self.done,

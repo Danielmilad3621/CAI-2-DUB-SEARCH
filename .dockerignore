@@ -12,3 +12,4 @@ screenshots
 .DS_Store
 .env
 .env.*
+app/routes.user.json
