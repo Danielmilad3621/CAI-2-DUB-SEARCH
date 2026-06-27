@@ -70,7 +70,7 @@ class SnapshotPage:
     def __init__(self, text: str) -> None:
         self._text = text
 
-    def locator(self, selector: str) -> "SnapshotPage":
+    def locator(self, selector: str) -> SnapshotPage:
         assert selector == "body", f"unexpected locator: {selector}"
         return self
 

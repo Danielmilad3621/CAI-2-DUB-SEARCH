@@ -1,0 +1,827 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DUB Flight Search Engine",
+    "description": "Headless flight-search API over Google Flights. A search is a reverse-engineered `tfs=` round-trip URL scraped headless with Playwright/Firefox, so it drives a real browser across every (destination x date-pair) combination and is therefore **asynchronous**: `POST /api/search` enqueues a job and returns `202` immediately, then you poll `GET /api/scans/{id}` for progress and `GET /api/scans/{id}/results` for ranked fares.\n\n**Provider constraints** (properties of the captured Google Flights blob, surfaced as `4xx` or documented no-ops rather than silent behavior): the origin is pinned to Dublin (DUB); the blob encodes a single-adult round trip; nonstop search is currently Dublin->Cairo only.",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "description": "Liveness probe. Returns 200 while the API process is up.",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes": {
+      "get": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "List Routes",
+        "description": "List built-in and user-defined routes with their estimated combination counts.",
+        "operationId": "list_routes_api_routes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response List Routes Api Routes Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Create Route",
+        "operationId": "create_route_api_routes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Route Api Routes Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{route_id}": {
+      "delete": {
+        "tags": [
+          "routes"
+        ],
+        "summary": "Delete Route",
+        "operationId": "delete_route_api_routes__route_id__delete",
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Route Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Delete Route Api Routes  Route Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search",
+        "description": "Enqueue an ad-hoc flight search and return a job handle (HTTP 202).\n\nThe scan runs in the background (one at a time \u2014 a single browser is shared),\nso poll `links.status` for progress and `links.results` for ranked fares.",
+        "operationId": "search_api_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Search Api Search Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scans": {
+      "get": {
+        "tags": [
+          "scans"
+        ],
+        "summary": "List Scans",
+        "description": "List recent search jobs (most recent first, capped at 20).",
+        "operationId": "list_scans_api_scans_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response List Scans Api Scans Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "scans"
+        ],
+        "summary": "Create Scan",
+        "operationId": "create_scan_api_scans_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Scan Api Scans Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scans/{job_id}": {
+      "get": {
+        "tags": [
+          "scans"
+        ],
+        "summary": "Get Scan",
+        "description": "Get a single job's status, progress and current best fare.",
+        "operationId": "get_scan_api_scans__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Scan Api Scans  Job Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scans/{job_id}/results": {
+      "get": {
+        "tags": [
+          "scans"
+        ],
+        "summary": "Get Scan Results",
+        "description": "Get a job's full result rows plus a price-ranked view and the winner.",
+        "operationId": "get_scan_results_api_scans__job_id__results_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Scan Results Api Scans  Job Id  Results Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scans/{job_id}/cancel": {
+      "post": {
+        "tags": [
+          "scans"
+        ],
+        "summary": "Cancel Scan",
+        "description": "Request cancellation of a queued or running job.",
+        "operationId": "cancel_scan_api_scans__job_id__cancel_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Cancel Scan Api Scans  Job Id  Cancel Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/saved-trips": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Saved Trips",
+        "description": "Best fares from the bundled cached result files (offline sample data, no scan).",
+        "operationId": "saved_trips_api_saved_trips_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Saved Trips Api Saved Trips Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RouteCreate": {
+        "properties": {
+          "destinations": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Destinations"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtitle"
+          },
+          "origin": {
+            "type": "string",
+            "title": "Origin",
+            "default": "DUB"
+          },
+          "airline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Airline"
+          },
+          "airline_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Airline Name"
+          },
+          "weekdays": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekdays"
+          },
+          "eta_minutes": {
+            "type": "integer",
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Eta Minutes",
+            "default": 30
+          },
+          "configurable_destinations": {
+            "type": "boolean",
+            "title": "Configurable Destinations",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "destinations"
+        ],
+        "title": "RouteCreate",
+        "description": "User-created routes are window-only and Dublin-origin-only (v1):\nfixed_pairs date strategies stay built-in, and the origin is locked until\nthe tfs= builder replaces byte-patching (Phase 4)."
+      },
+      "ScanCreate": {
+        "properties": {
+          "route_id": {
+            "type": "string",
+            "title": "Route Id",
+            "description": "Id of a route from GET /api/routes.",
+            "examples": [
+              "turkey"
+            ]
+          },
+          "destinations": {
+            "type": "string",
+            "title": "Destinations",
+            "description": "Comma-separated overrides, honored only by routes with configurable_destinations.",
+            "default": "IST,SAW,AYT"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$",
+            "title": "Currency",
+            "description": "ISO-4217 currency for displayed fares.",
+            "default": "EUR"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start",
+            "description": "Earliest departure date YYYY-MM-DD (default: today)."
+          },
+          "window_days": {
+            "type": "integer",
+            "maximum": 366.0,
+            "minimum": 7.0,
+            "title": "Window Days",
+            "default": 60
+          },
+          "min_trip_days": {
+            "type": "integer",
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Min Trip Days",
+            "default": 3
+          },
+          "max_trip_days": {
+            "type": "integer",
+            "maximum": 60.0,
+            "minimum": 2.0,
+            "title": "Max Trip Days",
+            "default": 14
+          },
+          "weekdays": {
+            "type": "string",
+            "title": "Weekdays",
+            "description": "Comma-separated 3-letter operating days (ignored by routes that pin their own).",
+            "default": "Sat,Sun,Tue,Thu"
+          }
+        },
+        "type": "object",
+        "required": [
+          "route_id"
+        ],
+        "title": "ScanCreate",
+        "description": "Body for POST /api/scans \u2014 runs a *saved* route (by id) over a date window."
+      },
+      "SearchRequest": {
+        "properties": {
+          "origin": {
+            "type": "string",
+            "title": "Origin",
+            "description": "Origin airport IATA. Engine is pinned to DUB; any other value returns 400.",
+            "default": "DUB",
+            "examples": [
+              "DUB"
+            ]
+          },
+          "destinations": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Destinations",
+            "description": "1-5 destination IATA codes, as a JSON array or comma-separated string.",
+            "examples": [
+              [
+                "IST",
+                "SAW",
+                "AYT"
+              ]
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$",
+            "title": "Currency",
+            "description": "ISO-4217 currency for displayed fares.",
+            "default": "EUR",
+            "examples": [
+              "EUR"
+            ]
+          },
+          "airline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Airline",
+            "description": "Optional 2-letter airline IATA. Stored on the search; note that result filtering is done by airline_name (the provider's airline filter is stale).",
+            "examples": [
+              "MS"
+            ]
+          },
+          "airline_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Airline Name",
+            "description": "Airline display name. When set, results are restricted to rows naming this carrier.",
+            "examples": [
+              "EgyptAir"
+            ]
+          },
+          "nonstop": {
+            "type": "boolean",
+            "title": "Nonstop",
+            "description": "Direct flights only. Currently supported for DUB->CAI only (else 400).",
+            "default": false
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start",
+            "description": "Earliest departure date YYYY-MM-DD. Defaults to the server's current date.",
+            "examples": [
+              "2026-07-01"
+            ]
+          },
+          "window_days": {
+            "type": "integer",
+            "maximum": 366.0,
+            "minimum": 7.0,
+            "title": "Window Days",
+            "description": "Days after `start` to include in the search window.",
+            "default": 60
+          },
+          "min_trip_days": {
+            "type": "integer",
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Min Trip Days",
+            "description": "Minimum trip length in days.",
+            "default": 3
+          },
+          "max_trip_days": {
+            "type": "integer",
+            "maximum": 60.0,
+            "minimum": 2.0,
+            "title": "Max Trip Days",
+            "description": "Maximum trip length in days.",
+            "default": 14
+          },
+          "weekdays": {
+            "type": "string",
+            "title": "Weekdays",
+            "description": "Comma-separated 3-letter operating days for both departure and return.",
+            "default": "Sat,Sun,Tue,Thu"
+          },
+          "adults": {
+            "type": "integer",
+            "maximum": 9.0,
+            "minimum": 1.0,
+            "title": "Adults",
+            "description": "Passenger count. The captured provider URL encodes a single-adult round trip; values > 1 are accepted and echoed back but do not yet change provider pricing.",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "destinations"
+        ],
+        "title": "SearchRequest",
+        "description": "Body for POST /api/search \u2014 an ad-hoc round-trip search built on the fly.\n\nUnlike POST /api/scans (which references a stored route id), this constructs\nan ephemeral route directly from the request and runs it as a background job."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "search",
+      "description": "Run an ad-hoc flight search and read its results."
+    },
+    {
+      "name": "scans",
+      "description": "Inspect, list and cancel search jobs."
+    },
+    {
+      "name": "routes",
+      "description": "Built-in and user-defined saved routes."
+    },
+    {
+      "name": "system",
+      "description": "Health check and cached sample data."
+    }
+  ]
+}

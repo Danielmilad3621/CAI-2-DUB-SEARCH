@@ -26,12 +26,17 @@ from __future__ import annotations
 import base64
 import datetime as dt
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Any, Callable, Iterator
+from typing import Any, Callable
 
 from playwright.sync_api import sync_playwright
 
-from app.browser_env import prepare_playwright_browsers, resolve_firefox_executable
+from app.browser_env import (
+    expected_firefox_revision,
+    prepare_playwright_browsers,
+    resolve_firefox_executable,
+)
 from app.jobs import ScanJob
 
 FIREFOX_PREFS = {
@@ -55,6 +60,10 @@ SEED_AIRLINE = b"MS"
 
 VIEWPORT = {"width": 1280, "height": 1800}
 LOCALE = "en-IE"
+
+# Google Flights intermittently serves a transient "Oops, something went wrong"
+# page; this many goto+reload attempts per pair before recording it unpriced.
+_GOTO_ATTEMPTS = 4
 
 
 def _b64u_decode(s: str) -> bytes:
@@ -112,6 +121,13 @@ def build_url(
     other 2-letter IATA code is swapped in place of MS (length-preserving).
     The destination swap covers both occurrences (outbound dest + return
     origin); the trip origin stays Dublin (see module docstring).
+
+    WARNING: passing any airline (MS or otherwise) currently yields a URL that
+    Google rejects with an "Oops, something went wrong" error page — the
+    captured per-leg filter bytes no longer match Google's tfs schema (verified
+    2026-06). run_scan therefore always calls this with airline=None and filters
+    by airline name in parse_results(). The airline param is retained only so the
+    golden URL-parity tests keep exercising the byte-swap path.
     """
     if airline is None:
         raw = BASE_RAW_NO_AIRLINE
@@ -128,6 +144,69 @@ def build_url(
     return (
         "https://www.google.com/travel/flights/search?"
         f"tfs={_b64u_encode(raw)}&tfu=EgYIABAAGAA&hl=en&curr={currency}"
+    )
+
+
+# --- Nonstop (direct-flight) search via a fresh, current-schema blob ----------
+#
+# BASE_TFS above is stale-schema: Google accepts it for a bare search but returns
+# an "Oops, something went wrong" error page the moment ANY filter field is
+# byte-patched in — verified 2026-06 for both the airline filter (\x32\x02<IATA>)
+# and the stops filter (\x28\x00). Filtered searches therefore cannot be built
+# from BASE_TFS at all.
+#
+# This blob was re-captured 2026-06 from a fresh DUB->Cairo round-trip search in
+# the live UI, so it is current-schema and DOES accept an added stops filter.
+# Dublin/Cairo are encoded as knowledge-graph IDs (/m/02cft, /m/01w2v), not the
+# literal "CAI" airport code, so the blob is Cairo-specific; only the literal ISO
+# dates are byte-swapped (that part of the encoding is schema-stable). EgyptAir is
+# the only carrier flying DUB-CAI nonstop, so a nonstop-only search returns
+# exactly the EgyptAir direct round trip at its real cheapest economy fare.
+NONSTOP_CAIRO_TFS = (
+    "CBwQAhooEgoyMDI2LTA3LTAyagwIAhIIL20vMDJjZnRyDAgDEggvbS8wMXcydho"
+    "oEgoyMDI2LTA3LTA5agwIAxIIL20vMDF3MnZyDAgCEggvbS8wMmNmdEABSAFwAYIBCwj___________8BmAEB"
+)
+NONSTOP_CAIRO_RAW = _b64u_decode(NONSTOP_CAIRO_TFS)
+NS_SEED_DEP = b"2026-07-02"
+NS_SEED_RET = b"2026-07-09"
+
+
+def _add_nonstop_filter(raw: bytes) -> bytes:
+    """Insert the stops filter (\\x28\\x00 = field 5, value 0 = nonstop) per leg.
+
+    Each leg is `\\x1a<len>\\x12\\n<10-byte ISO date>...`; we splice \\x28\\x00 in
+    right after the date field and bump the single-byte leg length by 2 — the
+    exact transform observed when toggling "Nonstop only" in the live UI.
+    """
+    out = bytearray()
+    i = 0
+    while i < len(raw):
+        if raw[i] == 0x1A and i + 1 < len(raw) and raw[i + 1] < 0x80:
+            leg_len = raw[i + 1]
+            leg = raw[i + 2 : i + 2 + leg_len]
+            if leg[:2] == b"\x12\n":  # leg starts with the date field
+                new_leg = b"\x12\n" + leg[2:12] + b"\x28\x00" + leg[12:]
+                out += bytes([0x1A, len(new_leg)]) + new_leg
+                i += 2 + leg_len
+                continue
+        out.append(raw[i])
+        i += 1
+    return bytes(out)
+
+
+def build_nonstop_url(dep: dt.date, ret: dt.date, *, currency: str = "EUR") -> str:
+    """Build a nonstop-only round-trip DUB->Cairo Google Flights search URL.
+
+    Date-swaps the current-schema NONSTOP_CAIRO blob and applies the stops=nonstop
+    filter. Cairo is baked into the blob as a knowledge-graph ID, so this builder
+    is DUB-Cairo only (see Route.nonstop's __post_init__ guard).
+    """
+    raw = NONSTOP_CAIRO_RAW.replace(NS_SEED_DEP, dep.strftime("%Y-%m-%d").encode(), 1)
+    raw = raw.replace(NS_SEED_RET, ret.strftime("%Y-%m-%d").encode(), 1)
+    raw = _add_nonstop_filter(raw)
+    return (
+        "https://www.google.com/travel/flights/search?"
+        f"tfs={_b64u_encode(raw)}&tfu=KgIIAw&hl=en&curr={currency}"
     )
 
 
@@ -148,16 +227,22 @@ class Route:
     fixed_pairs: tuple[tuple[str, str], ...] = ()
     configurable_destinations: bool = False  # honor config["destinations"] (Turkey)
     eta_minutes: int = 5
+    nonstop: bool = False  # direct flights only, via the fresh Cairo blob (DUB-CAI only)
 
     def __post_init__(self) -> None:
         if self.date_strategy not in ("window", "fixed_pairs"):
             raise ValueError(f"unknown date_strategy {self.date_strategy!r}")
+        if self.nonstop and self.destinations != ("CAI",):
+            raise ValueError(
+                f"route {self.id!r}: nonstop search is currently DUB→Cairo only "
+                "(the nonstop tfs blob has Cairo baked in as a knowledge-graph ID)"
+            )
         if self.date_strategy == "fixed_pairs" and not self.fixed_pairs:
             raise ValueError(f"route {self.id!r}: fixed_pairs strategy needs fixed_pairs")
         if not self.destinations:
             raise ValueError(f"route {self.id!r}: needs at least one destination")
         for code in self.destinations:
-            if len(code) != 3 or not code.isupper():
+            if len(code) != 3 or not code.isalpha() or not code.isupper():
                 raise ValueError(f"route {self.id!r}: bad destination IATA {code!r}")
         if self.airline is not None and len(self.airline) != 2:
             raise ValueError(f"route {self.id!r}: bad airline IATA {self.airline!r}")
@@ -197,6 +282,15 @@ def enumerate_pairs(route: Route, config: dict[str, Any]) -> list[tuple[dt.date,
     min_days = int(config.get("min_trip_days", 3))
     max_days = int(config.get("max_trip_days", 14))
     deps = list(_valid_days(start + dt.timedelta(days=1), end, weekdays))
+    if min_days == max_days:
+        # Exact stay length: pin the return to dep + N regardless of weekday so
+        # non-multiples-of-7 (e.g. 30) still yield a pair. Returns past the
+        # window's end are dropped to match the windowed search bounds.
+        return [
+            (dep, ret)
+            for dep in deps
+            if (ret := dep + dt.timedelta(days=min_days)) <= end
+        ]
     return [
         (dep, ret)
         for dep in deps
@@ -306,7 +400,21 @@ def _launch_firefox(p, *, headless: bool = True):
     launch_kwargs: dict = {"headless": headless, "firefox_user_prefs": FIREFOX_PREFS}
     if resolved:
         launch_kwargs["executable_path"] = resolved
-    return p.firefox.launch(**launch_kwargs)
+    try:
+        return p.firefox.launch(**launch_kwargs)
+    except Exception as exc:
+        # The usual culprit is a Firefox build whose juggler protocol does not
+        # match the installed Playwright, which aborts with SIGABRT on macOS.
+        rev = expected_firefox_revision()
+        hint = (
+            f" Playwright expects Firefox build {rev}; "
+            if rev
+            else " "
+        )
+        raise RuntimeError(
+            f"Failed to launch Firefox.{hint}"
+            "run `python -m playwright install firefox` to install the matching build."
+        ) from exc
 
 
 def run_scan(
@@ -353,9 +461,32 @@ def run_scan(
                 n += 1
                 job.done = n - 1
                 job.message = f"{route.origin} → {dest} · {dep.isoformat()} → {ret.isoformat()}"
-                url = build_url(dep, ret, dest=dest, airline=route.airline, currency=currency)
+                # The captured per-leg airline filter (\x32\x02<IATA>) in BASE_TFS
+                # is rejected by Google as of 2026-06 — any airline-filtered tfs
+                # returns an "Oops, something went wrong" page (verified for MS and
+                # QR), so those pairs came back unpriced. Two paths instead:
+                #   * nonstop routes (egyptair): a fresh current-schema blob +
+                #     stops=nonstop filter → exactly the EgyptAir direct round trip
+                #     (EgyptAir is the only nonstop DUB-CAI carrier), real prices.
+                #   * all-airline routes: search UNFILTERED (BASE_TFS still works
+                #     bare) and restrict by route.airline_name in parse_results().
+                if route.nonstop:
+                    url = build_nonstop_url(dep, ret, currency=currency)
+                else:
+                    url = build_url(dep, ret, dest=dest, airline=None, currency=currency)
                 try:
-                    page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                    # Google Flights intermittently serves an "Oops, something went
+                    # wrong" page that recovers on reload; retry a few times so a
+                    # transient error doesn't silently drop a date pair. Only the
+                    # explicit error page triggers a retry — a genuinely empty result
+                    # breaks out immediately and is recorded as unpriced.
+                    for attempt in range(_GOTO_ATTEMPTS):
+                        page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                        page.wait_for_timeout(2500)
+                        if "something went wrong" not in page.locator("body").aria_snapshot():
+                            break
+                        if attempt < _GOTO_ATTEMPTS - 1:
+                            page.wait_for_timeout(3000)
                 except Exception as exc:
                     row: dict[str, Any] = {
                         "dep": dep.isoformat(),
@@ -372,7 +503,6 @@ def run_scan(
                     if on_result:
                         on_result(row)
                     continue
-                page.wait_for_timeout(2500)
                 data = parse_results(page, airline_name=route.airline_name)
                 data.update(
                     dest=dest,

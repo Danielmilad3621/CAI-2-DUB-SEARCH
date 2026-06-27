@@ -84,7 +84,6 @@ def _error_and_update_segments(src: str, fn: ast.FunctionDef) -> tuple[str, list
 
 
 def _run(update_src: str, error_stmts: list[str], env: dict) -> tuple[dict, dict]:
-    flags = ast.PyCF_ONLY_AST  # placate linters; real compile below
     env = dict(env)
     env["data"] = dict(env["data"])  # fresh copy per run
     exec(compile("\n".join(error_stmts), "<error-row>", "exec"), env)  # noqa: S102

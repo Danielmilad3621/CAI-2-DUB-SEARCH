@@ -69,6 +69,7 @@ def _route_from_dict(raw: dict[str, Any]) -> Route:
         fixed_pairs=tuple(tuple(p) for p in raw.get("fixed_pairs") or ()),
         configurable_destinations=bool(raw.get("configurable_destinations", False)),
         eta_minutes=int(raw.get("eta_minutes", 5)),
+        nonstop=bool(raw.get("nonstop", False)),
     )
 
 
@@ -86,6 +87,7 @@ def _route_to_dict(route: Route) -> dict[str, Any]:
         "fixed_pairs": [list(p) for p in route.fixed_pairs],
         "configurable_destinations": route.configurable_destinations,
         "eta_minutes": route.eta_minutes,
+        "nonstop": route.nonstop,
     }
 
 

@@ -1,9 +1,16 @@
 services:
   api:
     build: .
+    # Bind to localhost only; front this with a reverse proxy for public exposure.
     ports:
       - "127.0.0.1:8010:8000"
     restart: unless-stopped
+    # Optional .env (see .env.example) supplies PORT / HOST / ALLOWED_ORIGINS.
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
-      - PORT=8000
+      # Fallbacks if .env is absent. ALLOWED_ORIGINS defaults to "*" in the app.
+      - PORT=${PORT:-8000}
+      - HOST=${HOST:-0.0.0.0}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}

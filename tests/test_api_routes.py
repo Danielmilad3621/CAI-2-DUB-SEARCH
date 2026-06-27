@@ -3,7 +3,7 @@
 Covers: GET /api/routes metadata, POST/DELETE /api/routes validation +
 protection, and POST /api/scans with route_id (worker function
 monkeypatched — no browser is launched). The deprecated scanner alias and
-GET /api/scanners were removed after the dynamic frontend shipped.
+GET /api/scanners endpoint were removed in an earlier refactor.
 
 Run standalone (no pytest needed):  .venv/bin/python tests/test_api_routes.py
 Or via pytest:                      pytest tests/test_api_routes.py

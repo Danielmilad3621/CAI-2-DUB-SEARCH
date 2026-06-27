@@ -2,3 +2,6 @@ fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 playwright>=1.49.0
 pydantic>=2.10.0
+# Lets pydantic evaluate `X | None` annotations on Python < 3.10 (the Docker
+# image is 3.10+, where this syntax is native and the backport is unused).
+eval_type_backport>=0.2; python_version < "3.10"

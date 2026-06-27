@@ -58,7 +58,7 @@ PHASE1_ROUTES = {
     "egyptair": Route(
         id="egyptair",
         name="Dublin → Cairo",
-        subtitle="EgyptAir only · Sat/Sun/Tue/Thu",
+        subtitle="EgyptAir nonstop · Sat/Sun/Tue/Thu",
         origin="DUB",
         destinations=("CAI",),
         airline="MS",
@@ -66,6 +66,7 @@ PHASE1_ROUTES = {
         date_strategy="window",
         weekdays=None,
         eta_minutes=30,
+        nonstop=True,
     ),
     "ams": Route(
         id="ams",

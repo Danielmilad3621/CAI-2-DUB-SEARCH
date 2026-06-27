@@ -32,7 +32,7 @@
   {
    "id": "egyptair",
    "name": "Dublin → Cairo",
-   "subtitle": "EgyptAir only · Sat/Sun/Tue/Thu",
+   "subtitle": "EgyptAir nonstop · Sat/Sun/Tue/Thu",
    "origin": "DUB",
    "destinations": ["CAI"],
    "airline": "MS",
@@ -41,7 +41,8 @@
    "weekdays": null,
    "fixed_pairs": [],
    "configurable_destinations": false,
-   "eta_minutes": 30
+   "eta_minutes": 30,
+   "nonstop": true
   },
   {
    "id": "ams",

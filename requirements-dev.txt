@@ -1,2 +1,4 @@
-# Dev/test-only dependencies (not shipped in the Docker image)
-httpx>=0.27        # FastAPI TestClient transport for tests/test_api_routes.py
+# Dev/test-only dependencies (not shipped in the Docker image).
+httpx>=0.27        # FastAPI TestClient transport for the API tests
+pytest>=8.0        # test runner (tests also run standalone without it)
+ruff>=0.6          # linter + formatter

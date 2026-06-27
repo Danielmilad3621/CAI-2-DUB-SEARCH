@@ -118,19 +118,6 @@ class JobStore:
                 job.status = JobStatus.FAILED
                 job.error = str(exc)
                 job.message = "Scan failed"
-                # #region agent log
-                try:
-                    from app.debug_log import debug_log
-
-                    debug_log(
-                        "D",
-                        "jobs.py:_run",
-                        "job failed",
-                        {"job_id": job_id, "error": str(exc)[:500]},
-                    )
-                except Exception:
-                    pass
-                # #endregion
             finally:
                 with self._lock:
                     if self._active_id == job_id:
