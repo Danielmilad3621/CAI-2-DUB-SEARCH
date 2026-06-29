@@ -280,6 +280,12 @@ def search(body: SearchRequest) -> dict[str, Any]:
             f"origin is locked to {LOCKED_ORIGIN}: the captured Google Flights blob encodes "
             "Dublin as a knowledge-graph id, so other origins are not yet supported",
         )
+    if body.currency.upper() != "EUR":
+        raise HTTPException(
+            422,
+            "currency: only EUR is currently supported — the result parser reads 'euros' "
+            "labels, so a non-EUR page would return no fares. Use EUR.",
+        )
 
     route = _build_search_route(body)
     config = {
@@ -335,6 +341,12 @@ def create_scan(body: ScanCreate) -> dict[str, Any]:
     route_id = body.route_id
     if registry.get(route_id) is None:
         raise HTTPException(404, f"Unknown route: {route_id}")
+    if body.currency.upper() != "EUR":
+        raise HTTPException(
+            422,
+            "currency: only EUR is currently supported — the result parser reads 'euros' "
+            "labels, so a non-EUR page would return no fares. Use EUR.",
+        )
 
     config = body.model_dump()
     try:

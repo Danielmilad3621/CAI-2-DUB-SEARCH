@@ -84,6 +84,11 @@ _BACKOFF_MAX_MS = 8000      # cap on the per-attempt backoff wait
 # rejects anything above this with 422 (see app/main.py).
 MAX_PAIRS_PER_SCAN = 1500
 
+# If a consent wall survives its one-shot dismissal on this many consecutive pairs,
+# the session is effectively stuck — abort rather than burn the whole pair budget
+# re-hitting it (consent is normally transient/dismissible, hence a small threshold).
+_MAX_CONSECUTIVE_CONSENT = 3
+
 
 class ScanOutcome(str, Enum):
     """Typed classification of a per-pair page state.
@@ -523,7 +528,10 @@ def classify_page(
         return ScanOutcome.PROVIDER_ERROR
     if "unusual traffic" in low or "not a robot" in low or "recaptcha" in low:
         return ScanOutcome.WALL_CAPTCHA
-    if "before you continue to google" in low and "reject all" in low:
+    if "before you continue to google" in low:
+        # Domain-specific heading; no need to also require the "Reject all" button
+        # text (a consent variant could rename it). URL-keyed consent is the primary
+        # path; this is the content fallback.
         return ScanOutcome.WALL_CONSENT
 
     if min_price is not None:
@@ -717,13 +725,24 @@ def _scan_one_pair(page, url: str, airline_name: str | None, config: dict[str, A
             _reject_consent(page)
             consent_retried = True
             continue  # re-read the page after dismissing consent
-        if outcome in (
-            ScanOutcome.PRICED,
-            ScanOutcome.EMPTY,
-            ScanOutcome.DRIFT_SUSPECTED,
-        ) or outcome in _BLOCKING_OUTCOMES:
+        # On an airline-filtered route, an EMPTY page that DID render competing-carrier
+        # rows (match_count>0, but none ours) may simply still be loading OUR carrier —
+        # keep polling within budget so a late-arriving target fare is not dropped (AC1).
+        # A page with zero rows, or a non-filtered route, accepts EMPTY immediately.
+        # classify_page itself is unchanged on purpose: the "Loading results" text
+        # persists on fully-loaded pages, so the retry decision (not the classifier) is
+        # where the still-loading-vs-genuinely-no-match distinction belongs.
+        filtered_maybe_loading = (
+            outcome == ScanOutcome.EMPTY and bool(airline_name) and match_count > 0
+        )
+        terminal = (
+            outcome in (ScanOutcome.PRICED, ScanOutcome.DRIFT_SUSPECTED)
+            or outcome in _BLOCKING_OUTCOMES
+            or (outcome == ScanOutcome.EMPTY and not filtered_maybe_loading)
+        )
+        if terminal:
             break
-        # LOADING / PROVIDER_ERROR (or a persistent consent wall): back off + retry.
+        # LOADING / PROVIDER_ERROR / filtered-maybe-loading: back off + retry.
         if attempt < attempts - 1:
             page.wait_for_timeout(_backoff_ms(attempt))
     return outcome, parsed, snap, match_count, attempt
@@ -829,6 +848,7 @@ def run_scan(
                 raise ScanBlocked(warm)
 
             n = 0
+            consecutive_consent = 0  # pairs in a row stuck on an undismissable consent wall
             for dest in dests:
                 if cancel_check():
                     break
@@ -885,6 +905,7 @@ def run_scan(
                                    "elapsed_ms": elapsed_ms},
                             exc_info=True,
                         )
+                        consecutive_consent = 0  # an error pair breaks a consent streak
                         row = _error_row(route, dest, dep, ret, str(exc), kind.value)
                         job.results.append(row)
                         job.done = n
@@ -915,6 +936,30 @@ def run_scan(
                         job.error_kind = outcome.value
                         raise ScanBlocked(outcome)
 
+                    # A consent wall that survives its one-shot dismissal on this many
+                    # pairs in a row means the session is stuck — abort like the other
+                    # walls instead of burning the remaining budget re-hitting it (AC5).
+                    if outcome == ScanOutcome.WALL_CONSENT:
+                        consecutive_consent += 1
+                        if consecutive_consent >= _MAX_CONSECUTIVE_CONSENT:
+                            row = _error_row(
+                                route, dest, dep, ret,
+                                f"consent wall persisted across {consecutive_consent} consecutive pairs",
+                                outcome.value,
+                            )
+                            job.results.append(row)
+                            job.done = n
+                            if on_result:
+                                on_result(row)
+                            job.error_kind = outcome.value
+                            log.error(
+                                "consent wall persisted; aborting scan",
+                                extra={"job_id": job.id, "consecutive_consent": consecutive_consent},
+                            )
+                            raise ScanBlocked(outcome)
+                    else:
+                        consecutive_consent = 0
+
                     row = _success_row(parsed, route, dest, dep, ret, url, outcome.value)
                     job.results.append(row)
                     job.done = n
@@ -925,10 +970,13 @@ def run_scan(
                 browser.close()
             except Exception:  # noqa: BLE001 - teardown best-effort; never mask the real error
                 log.debug("browser close failed during teardown", exc_info=True)
-
-    priced = sum(1 for r in job.results if r.get("min_price") is not None)
-    log.info(
-        "scan end",
-        extra={"job_id": job.id, "route_id": route.id, "done": job.done, "total": job.total,
-               "priced": priced, "unpriced": len(job.results) - priced},
-    )
+            # Emit the run-level summary on EVERY exit path (normal, deadline-return,
+            # ScanBlocked abort, or re-raised exception) — an operator needs the
+            # priced/unpriced tally most when a scan ended abnormally (AC3).
+            priced = sum(1 for r in job.results if r.get("min_price") is not None)
+            log.info(
+                "scan end",
+                extra={"job_id": job.id, "route_id": route.id, "done": job.done,
+                       "total": job.total, "priced": priced,
+                       "unpriced": len(job.results) - priced},
+            )

@@ -244,6 +244,42 @@ def test_deadline_stops_scan_early(monkeypatch) -> None:
     assert browser.closed is True
 
 
+_LH_ROW = (
+    '- link "From 435 euros round trip total. 1 stop flight with Lufthansa. '
+    'Leaves Dublin Airport at 8:45 AM. Select flight"\n'
+)
+_EGY_ROW = (
+    '- link "From 893 euros round trip total. Nonstop flight with EgyptAir. '
+    'Leaves Dublin Airport at 2:20 PM. Select flight"\n'
+)
+
+
+def test_airline_filtered_partial_load_retries_to_target_fare(monkeypatch) -> None:
+    # RT-01 regression: on an airline-filtered route, a still-loading page that has
+    # rendered only a COMPETING carrier (match_count>0, min_price=None) must NOT be
+    # recorded EMPTY — keep polling so the target carrier's late fare is captured.
+    route = _route(airline_name="EgyptAir")
+    loading_competitor = (FLIGHTS_URL, "- text: Loading results\n" + _LH_ROW)
+    egy_priced = (FLIGHTS_URL, _EGY_ROW)
+    job, page, _ = _run(monkeypatch, [HOME, loading_competitor, egy_priced], [(DEP, RET)], route=route)
+    row = job.results[0]
+    assert row["outcome"] == "priced", row
+    assert row["min_price"] == 893  # the EgyptAir fare was NOT dropped
+    assert len(page.goto_urls) == 3  # warm-up + retried until the target rendered
+
+
+def test_airline_filtered_genuinely_empty_settles_to_empty(monkeypatch) -> None:
+    # The flip side: if the target carrier never appears, the pair must settle to a
+    # typed EMPTY after exhausting the budget (the retry can't loop forever).
+    route = _route(airline_name="EgyptAir")
+    lh = (FLIGHTS_URL, _LH_ROW)
+    job, page, _ = _run(monkeypatch, [HOME, lh, lh, lh, lh], [(DEP, RET)], route=route)
+    row = job.results[0]
+    assert row["outcome"] == "empty"
+    assert row["min_price"] is None
+    assert len(page.goto_urls) == 1 + engine._GOTO_ATTEMPTS  # full budget tried first
+
+
 def test_warmup_wall_aborts_before_any_pair(monkeypatch) -> None:
     # A blocking wall reached at warm-up (step 0) aborts before any pair runs.
     signin = ("https://accounts.google.com/ServiceLogin?x=1", _fix("signin_redirect"))
@@ -280,3 +316,34 @@ def test_midscan_consent_is_dismissed_then_priced(monkeypatch) -> None:
     assert job.results[0]["outcome"] == "priced"
     # warm-up goto + consent attempt + retry-after-dismiss attempt.
     assert len(page.goto_urls) == 3
+
+
+def test_persistent_consent_aborts_scan(monkeypatch) -> None:
+    # A consent wall that survives dismissal on every pair must abort the scan after
+    # the threshold, not burn the whole pair budget re-hitting it (AC5).
+    consent = ("https://consent.google.com/m?continue=x", _fix("consent_wall"))
+    page = FakePage([HOME, consent])  # every pair/attempt clamps to the consent step
+    browser = FakeBrowser(page)
+    pairs = [(DEP, RET), (DEP2, RET2), (dt.date(2026, 9, 4), dt.date(2026, 9, 7)),
+             (dt.date(2026, 9, 11), dt.date(2026, 9, 14))]
+    _patch(monkeypatch, browser, pairs)
+    job = _job()
+    with pytest.raises(ScanBlocked):
+        run_scan(_route(), job, lambda: False, {}, headless=True)
+    assert job.error_kind == "wall_consent"
+    consent_rows = sum(1 for r in job.results if r["outcome"] == "wall_consent")
+    assert consent_rows == engine._MAX_CONSECUTIVE_CONSENT  # aborted at the threshold
+    assert len(job.results) < len(pairs)  # did NOT scan all pairs
+    assert browser.closed is True
+
+
+def test_scan_end_logged_on_abort(monkeypatch, caplog) -> None:
+    # OBS-1: the run-level 'scan end' summary must fire even when the scan aborts.
+    caplog.set_level(logging.INFO, logger="dub.engine")
+    signin = ("https://accounts.google.com/ServiceLogin?x=1", _fix("signin_redirect"))
+    page = FakePage([HOME, signin])
+    browser = FakeBrowser(page)
+    _patch(monkeypatch, browser, [(DEP, RET), (DEP2, RET2)])
+    with pytest.raises(ScanBlocked):
+        run_scan(_route(), _job(), lambda: False, {}, headless=True)
+    assert any(r.getMessage() == "scan end" for r in caplog.records), "scan end must log on abort"

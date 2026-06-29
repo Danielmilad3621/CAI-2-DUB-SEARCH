@@ -88,6 +88,17 @@ def test_search_combination_budget_enforced() -> None:
     assert str(engine.MAX_PAIRS_PER_SCAN) in resp.json()["detail"]
 
 
+def test_non_eur_currency_rejected_with_clear_error() -> None:
+    # The parser is EUR-only; a non-EUR request would silently return no fares, so
+    # fail fast with a clear 422 instead (AC1: no silent empty). Errors before any job.
+    r1 = client.post("/api/search", json={"destinations": "CDG", "currency": "USD"})
+    assert r1.status_code == 422, r1.text
+    assert "EUR" in r1.json()["detail"]
+    r2 = client.post("/api/scans", json={"route_id": "egyptair", "currency": "GBP"})
+    assert r2.status_code == 422, r2.text
+    assert "EUR" in r2.json()["detail"]
+
+
 def test_scans_endpoint_combination_budget_enforced() -> None:
     # The identical guard on the saved-route endpoint (egyptair is a window route).
     resp = client.post("/api/scans", json={
