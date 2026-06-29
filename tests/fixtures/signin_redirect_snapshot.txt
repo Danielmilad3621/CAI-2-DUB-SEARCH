@@ -1,0 +1,7 @@
+- main:
+  - heading "Sign in" [level=1]
+  - text: Use your Google Account
+  - textbox "Email or phone"
+  - button "Forgot email?"
+  - text: to continue to Google Flights
+  - button "Next"

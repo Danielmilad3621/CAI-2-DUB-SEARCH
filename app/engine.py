@@ -25,9 +25,12 @@ from __future__ import annotations
 
 import base64
 import datetime as dt
+import logging
 import re
+import time
 from collections.abc import Iterator
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Callable
 
 from playwright.sync_api import sync_playwright
@@ -38,6 +41,11 @@ from app.browser_env import (
     resolve_firefox_executable,
 )
 from app.jobs import ScanJob
+
+# Structured logging for the scan path (mirrors app/registry.py's "dub.registry").
+# Every per-pair outcome is logged with an `extra=` field set so an empty/failed
+# pair is explainable from logs alone (no live re-run needed).
+log = logging.getLogger("dub.engine")
 
 FIREFOX_PREFS = {
     # Bypass corporate DNS via direct-IP DoH endpoint.
@@ -62,8 +70,46 @@ VIEWPORT = {"width": 1280, "height": 1800}
 LOCALE = "en-IE"
 
 # Google Flights intermittently serves a transient "Oops, something went wrong"
-# page; this many goto+reload attempts per pair before recording it unpriced.
-_GOTO_ATTEMPTS = 4
+# page, and the result list lazy-loads after navigation. These tunables drive the
+# per-pair navigate/settle/retry loop; all are overridable via the scan `config`.
+_GOTO_ATTEMPTS = 4          # navigate+reload attempts per pair before giving up
+_GOTO_TIMEOUT_MS = 45000    # per-navigation timeout
+_SETTLE_MS = 2500           # wait after each goto for the result list to render
+_BACKOFF_BASE_MS = 1500     # base wait between retry attempts (grows exponentially)
+_BACKOFF_MAX_MS = 8000      # cap on the per-attempt backoff wait
+
+# Hard upper bound on (destination x date-pair) combinations a single scan may
+# enqueue. Each combination is a real headless navigation, so an unbounded sweep
+# (366 days x 7 weekdays x 5 dests) would schedule a multi-day job; the API
+# rejects anything above this with 422 (see app/main.py).
+MAX_PAIRS_PER_SCAN = 1500
+
+
+class ScanOutcome(str, Enum):
+    """Typed classification of a per-pair page state.
+
+    The whole point of AC1/AC2/AC3 resilience: a `min_price=None` row is
+    meaningless on its own — it could be a genuinely empty date pair, a page that
+    was still loading, a drifted price-label format, or an anti-bot/consent/
+    sign-in wall. Every recorded row and every log line carries one of these so
+    those cases are never conflated.
+    """
+
+    PRICED = "priced"                  # at least one fare parsed
+    EMPTY = "empty"                    # page rendered, genuinely no flights
+    LOADING = "loading"                # still populating after all attempts
+    DRIFT_SUSPECTED = "drift_suspected"  # rows rendered but 0 price-regex matches
+    PROVIDER_ERROR = "provider_error"  # "something went wrong" after all attempts
+    WALL_CONSENT = "wall_consent"      # consent.google.com / "Before you continue"
+    WALL_SIGNIN = "wall_signin"        # accounts.google.com / ServiceLogin redirect
+    WALL_CAPTCHA = "wall_captcha"      # "unusual traffic" / reCAPTCHA / /sorry/
+    TIMEOUT = "timeout"                # navigation/parse timed out
+    PARSE_ERROR = "parse_error"        # parser raised on this page
+    ERROR = "error"                    # other navigation exception
+
+# A wall that means the browser session is burned: abort the whole scan rather
+# than silently recording every remaining pair as empty.
+_BLOCKING_OUTCOMES = frozenset({ScanOutcome.WALL_SIGNIN, ScanOutcome.WALL_CAPTCHA})
 
 
 def _b64u_decode(s: str) -> bytes:
@@ -107,6 +153,26 @@ BASE_RAW = _b64u_decode(BASE_TFS)
 BASE_RAW_NO_AIRLINE = strip_airline_filter(BASE_RAW, SEED_AIRLINE)
 
 
+def _replace_dates(
+    raw: bytes, dep_seed: bytes, ret_seed: bytes, dep: dt.date, ret: dt.date
+) -> bytes:
+    """Swap the outbound + return seed dates collision-safely.
+
+    A naive `raw.replace(dep_seed, dep, 1)` then `raw.replace(ret_seed, ret, 1)`
+    is WRONG when the new departure string equals ret_seed (e.g. dep == the seed
+    return date): the first replace creates a second copy of ret_seed, so the
+    second replace targets the outbound leg instead of the return one and the two
+    dates end up swapped. Route each date through a unique placeholder so every
+    leg is rewritten exactly once. Output is byte-identical to the naive form for
+    every non-colliding pair, so URL-parity goldens are unaffected.
+    """
+    raw = raw.replace(dep_seed, b"\x00__DEP__\x00", 1)
+    raw = raw.replace(ret_seed, b"\x00__RET__\x00", 1)
+    raw = raw.replace(b"\x00__DEP__\x00", dep.strftime("%Y-%m-%d").encode(), 1)
+    raw = raw.replace(b"\x00__RET__\x00", ret.strftime("%Y-%m-%d").encode(), 1)
+    return raw
+
+
 def build_url(
     dep: dt.date,
     ret: dt.date,
@@ -139,8 +205,7 @@ def build_url(
         raise ValueError(f"airline must be a 2-letter IATA code or None, got {airline!r}")
     if dest != "CAI":
         raw = raw.replace(SEED_DEST, dest.encode())
-    raw = raw.replace(SEED_DEP, dep.strftime("%Y-%m-%d").encode(), 1)
-    raw = raw.replace(SEED_RET, ret.strftime("%Y-%m-%d").encode(), 1)
+    raw = _replace_dates(raw, SEED_DEP, SEED_RET, dep, ret)
     return (
         "https://www.google.com/travel/flights/search?"
         f"tfs={_b64u_encode(raw)}&tfu=EgYIABAAGAA&hl=en&curr={currency}"
@@ -201,13 +266,76 @@ def build_nonstop_url(dep: dt.date, ret: dt.date, *, currency: str = "EUR") -> s
     filter. Cairo is baked into the blob as a knowledge-graph ID, so this builder
     is DUB-Cairo only (see Route.nonstop's __post_init__ guard).
     """
-    raw = NONSTOP_CAIRO_RAW.replace(NS_SEED_DEP, dep.strftime("%Y-%m-%d").encode(), 1)
-    raw = raw.replace(NS_SEED_RET, ret.strftime("%Y-%m-%d").encode(), 1)
+    raw = _replace_dates(NONSTOP_CAIRO_RAW, NS_SEED_DEP, NS_SEED_RET, dep, ret)
     raw = _add_nonstop_filter(raw)
     return (
         "https://www.google.com/travel/flights/search?"
         f"tfs={_b64u_encode(raw)}&tfu=KgIIAw&hl=en&curr={currency}"
     )
+
+
+# --- One-way Cairo -> Dublin search -------------------------------------------
+#
+# Captured 2026-06 from a live one-way CAI->DUB search (all airlines, no stops
+# filter). One-way is encoded by the TRAILING trip-type field \x98\x01\x02
+# (round trip = \x98\x01\x01; field 2 stays \x10\x02 in both). Cairo/Dublin are
+# knowledge-graph ids (/m/01w2v, /m/02cft), so this builder is CAI->DUB only and
+# only the literal ISO departure date is byte-swapped (the schema-stable part).
+ONEWAY_CAI_DUB_TFS = (
+    "CBwQAhooEgoyMDI2LTA4LTA2agwIAxIIL20vMDF3MnZyDAgDEggvbS8wMmNmdEABSAFwAYIBCwj"
+    "___________8BmAEC"
+)
+ONEWAY_CAI_DUB_RAW = _b64u_decode(ONEWAY_CAI_DUB_TFS)
+OW_SEED_DEP = b"2026-08-06"
+
+
+def build_oneway_url(dep: dt.date, *, currency: str = "EUR") -> str:
+    """Build a one-way Cairo->Dublin Google Flights search URL (all airlines).
+
+    Date-swaps the captured one-way CAI->DUB blob. Cairo/Dublin are baked in as
+    knowledge-graph ids so this is CAI->DUB only; results include every carrier,
+    so filter to nonstop / a given airline in parse_oneway().
+    """
+    raw = ONEWAY_CAI_DUB_RAW.replace(OW_SEED_DEP, dep.strftime("%Y-%m-%d").encode(), 1)
+    return (
+        "https://www.google.com/travel/flights/search?"
+        f"tfs={_b64u_encode(raw)}&hl=en&curr={currency}"
+    )
+
+
+def parse_oneway(
+    page, *, airline_name: str | None = None, nonstop_only: bool = False
+) -> dict:
+    """Read one-way fares from the result list.
+
+    One-way labels read 'From N euros. <Nonstop|N stops> flight with <airline>.
+    Leaves <origin> ... arrives at <dest> ...' -- note NO 'round trip total'
+    (that is the round-trip shape parsed by parse_results). Optionally keep only
+    nonstop rows and/or rows whose carrier matches airline_name.
+    """
+    snap = page.locator("body").aria_snapshot()
+    pattern = (
+        r"From\s+(\d[\d,]*)\s+euros\.\s*(Nonstop|\d+\s+stops?)?\s*"
+        r"flight with\s+([A-Za-z][A-Za-z0-9 &\-\.]+?)\.([^\"]{0,300})"
+    )
+    entries: list[dict] = []
+    for m in re.finditer(pattern, snap):
+        price = int(m.group(1).replace(",", ""))
+        stops = m.group(2)
+        airline = m.group(3).strip() if m.group(3) else None
+        cls = next(
+            (c for c in ("Business Class", "Premium economy", "First Class") if c in m.group(0)),
+            "Economy",
+        )
+        if nonstop_only and stops != "Nonstop":
+            continue
+        if airline_name and (not airline or airline_name.lower() not in airline.lower()):
+            continue
+        entries.append(
+            {"price": price, "airline": airline, "stops": stops, "class": cls,
+             "snippet_head": m.group(0)[:280]}
+        )
+    return {"min_price": min((e["price"] for e in entries), default=None), "entries": entries[:5]}
 
 
 @dataclass(frozen=True)
@@ -252,13 +380,31 @@ _WEEKDAY_MAP = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun
 
 
 def _parse_weekdays(spec: str) -> set[int]:
+    """Parse a comma-separated weekday spec into weekday indices.
+
+    Raises ValueError (NOT SystemExit) on an unknown token or an empty result.
+    SystemExit is a BaseException that the API's `except Exception` estimate
+    guard could not catch, so a bad weekday returned an opaque HTTP 500 (and a
+    worker thread could die leaving a job stuck RUNNING). ValueError flows through
+    the existing 400 wrapper. Blank/trailing-comma tokens are skipped so 'Sat,'
+    parses to {Sat} — matching registry._validate_weekdays.
+    """
     out: set[int] = set()
     for token in spec.split(","):
         t = token.strip().title()[:3]
+        if not t:
+            continue
         if t not in _WEEKDAY_MAP:
-            raise SystemExit(f"unknown weekday {token!r}")
+            raise ValueError(f"unknown weekday {token!r}")
         out.add(_WEEKDAY_MAP[t])
+    if not out:
+        raise ValueError(f"no valid weekdays in {spec!r}")
     return out
+
+
+def _valid_iata(code: str) -> bool:
+    """A destination IATA code is exactly 3 alphabetic characters."""
+    return len(code) == 3 and code.isalpha()
 
 
 def _valid_days(start: dt.date, end: dt.date, weekdays: set[int]) -> Iterator[dt.date]:
@@ -307,6 +453,12 @@ def destinations_for(route: Route, config: dict[str, Any]) -> tuple[str, ...]:
         dests = tuple(
             d.strip().upper() for d in str(config["destinations"]).split(",") if d.strip()
         )
+        # Validate before these reach build_url's protobuf byte-replace
+        # (dest.encode()): a configurable-destinations route is the one path where
+        # caller-supplied codes bypass Route.__post_init__ validation.
+        for code in dests:
+            if not _valid_iata(code):
+                raise ValueError(f"bad destination IATA code: {code!r} (expected 3 letters)")
         if dests:
             return dests
     return route.destinations
@@ -316,28 +468,104 @@ def estimate_pairs(route: Route, config: dict[str, Any]) -> int:
     return len(enumerate_pairs(route, config)) * len(destinations_for(route, config))
 
 
-def parse_results(page, *, airline_name: str | None = None) -> dict:
-    """Read the cheapest round-trip totals from the result list.
+# A priced round-trip row: "From <N> euros round trip total. <rest up to the
+# closing aria quote>". group(1)=price, group(2)=the rest of the label.
+_RT_ROW_RE = re.compile(r"From\s+(\d[\d,]*)\s+euros round trip total\.([^\"]{0,500})")
+# Carrier clause inside a row label: "... flight with EgyptAir." / "operated by KLM".
+# Lowercase initial allowed (easyJet, flydubai, airBaltic).
+_CARRIER_RE = re.compile(
+    r"(?:flight|flights)\s+(?:with|operated by)\s+([A-Za-z][A-Za-z0-9 &\-\.]+?)\."
+)
+_CHEAPEST_TAB_RE = re.compile(r"Cheapest from\s+(\d[\d,]*) euros")
+# A rendered-but-unrecognized price token: a number adjacent to a currency glyph
+# or word. Distinguishes a drifted price-label format (rows rendered, our row
+# regex matched 0) from a genuinely flight-less page (no price tokens at all).
+# NOTE: EUR-only, like _RT_ROW_RE — a non-EUR currency drift carries neither '€'
+# nor 'euros', so it would classify EMPTY rather than DRIFT_SUSPECTED. Pre-existing
+# (the price regex was always EUR-only); revisit both if non-EUR routes are enabled.
+_PRICE_TOKEN_RE = re.compile(r"€\s*\d|\b\d[\d,]*\s+euros\b", re.I)
 
-    Both branches are kept verbatim from the legacy scrapers (see module
-    docstring); tests/test_parser_parity.py pins them to recorded outputs.
+
+def count_price_rows(snap: str) -> int:
+    """Number of 'round trip total' rows present, regardless of airline filter.
+
+    This is the 'did the result list render in the expected shape' signal used by
+    classify_page; it is independent of which rows survive an airline filter.
     """
-    snap = page.locator("body").aria_snapshot()
+    return sum(1 for _ in _RT_ROW_RE.finditer(snap))
 
+
+def classify_page(
+    snap: str, url: str = "", *, match_count: int, min_price: int | None
+) -> ScanOutcome:
+    """Classify a post-navigation page into a typed ScanOutcome. Pure / offline-safe.
+
+    URL-keyed wall checks come FIRST and key on the page URL, NEVER the snapshot
+    text: every happy results page carries a header "Sign in" link whose href is
+    accounts.google.com/ServiceLogin (see tests/fixtures/egyptair_snapshot.txt:28),
+    so detecting sign-in from the snapshot would misclassify 100% of successful
+    scans as blocked. A genuine sign-in/consent/CAPTCHA wall is a *redirect*,
+    visible in page.url.
+
+    Resilience bias: when uncertain between "rendered-but-unparseable" and
+    "genuinely empty", prefer DRIFT_SUSPECTED (investigate) over EMPTY (trust).
+    """
+    u = url or ""
+    if "consent.google.com" in u:
+        return ScanOutcome.WALL_CONSENT
+    if "accounts.google.com" in u or "/ServiceLogin" in u or "/signin/" in u:
+        return ScanOutcome.WALL_SIGNIN
+    if "/sorry/" in u:
+        return ScanOutcome.WALL_CAPTCHA
+
+    low = snap.lower()
+    if "something went wrong" in low:
+        return ScanOutcome.PROVIDER_ERROR
+    if "unusual traffic" in low or "not a robot" in low or "recaptcha" in low:
+        return ScanOutcome.WALL_CAPTCHA
+    if "before you continue to google" in low and "reject all" in low:
+        return ScanOutcome.WALL_CONSENT
+
+    if min_price is not None:
+        return ScanOutcome.PRICED
+    if match_count > 0:
+        # Rows rendered in the expected shape but none usable (e.g. an airline
+        # filter excluded them all) — a legitimate "no matching flights", not drift.
+        return ScanOutcome.EMPTY
+    if "loading results" in low or "fetching results" in low:
+        return ScanOutcome.LOADING
+    if _PRICE_TOKEN_RE.search(snap):
+        return ScanOutcome.DRIFT_SUSPECTED
+    return ScanOutcome.EMPTY
+
+
+def parse_snapshot(snap: str, *, airline_name: str | None = None) -> dict:
+    """Parse cheapest round-trip totals out of a raw aria-snapshot string.
+
+    Split from parse_results so run_scan can snapshot the page ONCE and reuse the
+    exact text for both classification and the recorded row. Output shapes are
+    preserved verbatim from the legacy scrapers (tests/test_parser_parity.py pins
+    them): airline-filtered (cheapest_tab + uncapped {price,class,snippet}) and
+    any-airline ({price,airline,stops,class,snippet_head}, capped at 5).
+    """
     if airline_name:
         # Airline-filtered shape (legacy cheapest_dub_cai_egyptair.parse_results).
         cheapest_tab = None
-        m = re.search(r"Cheapest from\s+(\d[\d,]*) euros", snap)
+        m = _CHEAPEST_TAB_RE.search(snap)
         if m:
             cheapest_tab = int(m.group(1).replace(",", ""))
 
         entries = []
-        pattern = (
-            r"From\s+(\d[\d,]*)\s+euros round trip total\.[^\"]*"
-            + re.escape(airline_name)
-            + r"[^\"]*"
-        )
-        for m in re.finditer(pattern, snap):
+        for m in _RT_ROW_RE.finditer(snap):
+            rest = m.group(2)
+            # Anchor the airline to the carrier clause rather than accepting the
+            # name appearing anywhere in the label: a cheaper competitor row whose
+            # label merely *mentions* the target carrier (e.g. a comparison clause)
+            # must NOT be attributed to it.
+            carrier_m = _CARRIER_RE.search(rest)
+            carrier = carrier_m.group(1).strip() if carrier_m else None
+            if not carrier or airline_name.lower() not in carrier.lower():
+                continue
             price = int(m.group(1).replace(",", ""))
             snippet = m.group(0)
             cls = next(
@@ -354,15 +582,12 @@ def parse_results(page, *, airline_name: str | None = None) -> dict:
 
     # Any-airline shape (legacy cheapest_dub_turkey / cheapest_dub_ams parse_results).
     entries: list[dict] = []
-    pattern = r"From\s+(\d[\d,]*)\s+euros round trip total\.([^\"]{0,500})"
-    for m in re.finditer(pattern, snap):
+    for m in _RT_ROW_RE.finditer(snap):
         price = int(m.group(1).replace(",", ""))
         snippet = m.group(0)
         rest = m.group(2)
 
-        airline_match = re.search(
-            r"(?:flight|flights)\s+(?:with|operated by)\s+([A-Z][A-Za-z0-9 &\-\.]+?)\.", rest
-        )
+        airline_match = _CARRIER_RE.search(rest)
         airline = airline_match.group(1).strip() if airline_match else None
 
         cls = next(
@@ -388,11 +613,52 @@ def parse_results(page, *, airline_name: str | None = None) -> dict:
     }
 
 
+def parse_results(page, *, airline_name: str | None = None) -> dict:
+    """Read the cheapest round-trip totals from a Playwright page's result list.
+
+    Thin wrapper over parse_snapshot for callers that hold a page object (the CLI
+    shims and the parity tests' SnapshotPage). run_scan calls parse_snapshot
+    directly on the snapshot it already captured.
+    """
+    return parse_snapshot(page.locator("body").aria_snapshot(), airline_name=airline_name)
+
+
+class ScanBlocked(RuntimeError):
+    """Abort a scan because an anti-bot / sign-in / CAPTCHA wall was hit.
+
+    Once the session is walled, every subsequent pair would be blocked too, so we
+    stop rather than silently recording the rest as 'empty'. The worker marks the
+    job FAILED and surfaces job.error_kind (the ScanOutcome value) so a wall is a
+    distinct, diagnosable terminal state — not an opaque timeout (AC2).
+    """
+
+    def __init__(self, outcome: ScanOutcome) -> None:
+        self.outcome = outcome
+        super().__init__(f"scan aborted: {outcome.value} wall detected")
+
+
+def _page_url(page) -> str:
+    return getattr(page, "url", "") or ""
+
+
+def _backoff_ms(attempt: int) -> int:
+    """Exponential backoff (deterministic small jitter) between retry attempts.
+
+    Jitter is derived from the attempt index rather than random() so the backoff
+    is testable, while still de-synchronizing successive retries enough to avoid
+    a fixed-cadence pattern that re-trips anti-bot heuristics.
+    """
+    base = min(_BACKOFF_MAX_MS, _BACKOFF_BASE_MS * (2 ** attempt))
+    jitter = (attempt * 137) % 250
+    return min(_BACKOFF_MAX_MS, base + jitter)
+
+
 def _reject_consent(page) -> None:
-    if "consent.google.com" in page.url:
+    if "consent.google.com" in _page_url(page):
         page.get_by_role("button", name=re.compile(r"^Reject all$", re.I)).click(timeout=10000)
         page.wait_for_load_state("domcontentloaded")
-        page.wait_for_timeout(2500)
+        page.wait_for_timeout(_SETTLE_MS)
+        log.info("consent wall rejected")
 
 
 def _launch_firefox(p, *, headless: bool = True):
@@ -400,6 +666,7 @@ def _launch_firefox(p, *, headless: bool = True):
     launch_kwargs: dict = {"headless": headless, "firefox_user_prefs": FIREFOX_PREFS}
     if resolved:
         launch_kwargs["executable_path"] = resolved
+    log.info("launching firefox", extra={"executable": resolved, "headless": headless})
     try:
         return p.firefox.launch(**launch_kwargs)
     except Exception as exc:
@@ -411,10 +678,97 @@ def _launch_firefox(p, *, headless: bool = True):
             if rev
             else " "
         )
+        log.exception("firefox launch failed")
         raise RuntimeError(
             f"Failed to launch Firefox.{hint}"
             "run `python -m playwright install firefox` to install the matching build."
         ) from exc
+
+
+def _scan_one_pair(page, url: str, airline_name: str | None, config: dict[str, Any]):
+    """Navigate to `url`, polling until a terminal page state, classify it.
+
+    Returns (outcome, parsed, snap, match_count, attempt). All browser I/O lives
+    here. Retries on LOADING / PROVIDER_ERROR with exponential backoff (so a
+    still-populating page is NOT misread as empty); re-handles a consent wall once;
+    stops immediately on a usable price, a true-empty/drift page, or a blocking
+    wall. Parses ONCE per attempt and reuses that snapshot for both the decision
+    and the recorded row.
+    """
+    attempts = int(config.get("goto_attempts", _GOTO_ATTEMPTS))
+    timeout_ms = int(config.get("goto_timeout_ms", _GOTO_TIMEOUT_MS))
+    settle_ms = int(config.get("settle_ms", _SETTLE_MS))
+    consent_retried = False
+    outcome = ScanOutcome.EMPTY
+    parsed: dict[str, Any] = {"min_price": None, "entries": []}
+    snap = ""
+    match_count = 0
+    attempt = 0
+    for attempt in range(attempts):
+        page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
+        page.wait_for_timeout(settle_ms)
+        snap = page.locator("body").aria_snapshot()
+        parsed = parse_snapshot(snap, airline_name=airline_name)
+        match_count = count_price_rows(snap)
+        outcome = classify_page(
+            snap, _page_url(page), match_count=match_count, min_price=parsed["min_price"]
+        )
+        if outcome == ScanOutcome.WALL_CONSENT and not consent_retried:
+            _reject_consent(page)
+            consent_retried = True
+            continue  # re-read the page after dismissing consent
+        if outcome in (
+            ScanOutcome.PRICED,
+            ScanOutcome.EMPTY,
+            ScanOutcome.DRIFT_SUSPECTED,
+        ) or outcome in _BLOCKING_OUTCOMES:
+            break
+        # LOADING / PROVIDER_ERROR (or a persistent consent wall): back off + retry.
+        if attempt < attempts - 1:
+            page.wait_for_timeout(_backoff_ms(attempt))
+    return outcome, parsed, snap, match_count, attempt
+
+
+def _success_row(
+    parsed: dict[str, Any], route: Route, dest: str, dep: dt.date, ret: dt.date,
+    url: str, outcome: str,
+) -> dict[str, Any]:
+    """Parser output + the scan envelope + the typed outcome.
+
+    The first 8 envelope keys (dest..url) and their order are the legacy contract
+    pinned by tests/test_row_envelope_parity.py; `outcome` is the new typed field
+    appended last (min_price=None rows are no longer indistinguishable). Returns a
+    NEW dict (does not mutate `parsed`); the spread preserves the key-order contract.
+    """
+    return {
+        **parsed,
+        "dest": dest,
+        "origin": route.origin,
+        "dep": dep.isoformat(),
+        "ret": ret.isoformat(),
+        "dep_wd": dep.strftime("%a"),
+        "ret_wd": ret.strftime("%a"),
+        "trip_days": (ret - dep).days,
+        "url": url,
+        "outcome": outcome,
+    }
+
+
+def _error_row(
+    route: Route, dest: str, dep: dt.date, ret: dt.date, error: str, outcome: str,
+) -> dict[str, Any]:
+    """Unpriced error/blocked row. dest-tagged only for multi-destination routes
+    (legacy quirk preserved); `outcome` distinguishes timeout / parse_error / wall."""
+    row: dict[str, Any] = {
+        "dep": dep.isoformat(),
+        "ret": ret.isoformat(),
+        "min_price": None,
+        "error": error,
+        "outcome": outcome,
+    }
+    if route.configurable_destinations or len(route.destinations) > 1:
+        row = {"dest": dest, **row}
+    return row
 
 
 def run_scan(
@@ -429,94 +783,152 @@ def run_scan(
     """Scan every destination x date-pair combination for a route.
 
     Appends one result row per combination to job.results and keeps
-    job.total/done/message updated. on_result (used by the CLI shims for
-    progress printing) fires after each row, success or error.
+    job.total/done/message updated. Every row carries a typed `outcome` and every
+    pair emits a structured log record, so an empty/blocked pair is explainable
+    from logs alone (AC3). A sign-in/CAPTCHA wall aborts the scan via ScanBlocked
+    (AC2). The browser is always torn down (try/finally), and a per-scan deadline
+    (config['max_scan_seconds'], optional) bounds wall-clock. on_result fires after
+    each row, success or error (used by the CLI shims for progress printing).
     """
     currency = config.get("currency", "EUR")
     dests = destinations_for(route, config)
     pairs = enumerate_pairs(route, config)
     job.total = len(pairs) * len(dests)
+    max_scan_seconds = config.get("max_scan_seconds")
+    scan_started = time.monotonic()
+    log.info(
+        "scan start",
+        extra={"job_id": job.id, "route_id": route.id, "dests": list(dests),
+               "pairs": len(pairs), "total": job.total},
+    )
 
-    prepare_playwright_browsers()
+    status = prepare_playwright_browsers()
+    log.info("playwright browsers prepared", extra={"status": status})
     with sync_playwright() as p:
         browser = _launch_firefox(p, headless=headless)
-        ctx = browser.new_context(viewport=VIEWPORT, locale=LOCALE)
-        page = ctx.new_page()
+        try:
+            ctx = browser.new_context(viewport=VIEWPORT, locale=LOCALE)
+            page = ctx.new_page()
 
-        page.goto(
-            f"https://www.google.com/travel/flights?hl=en&curr={currency}",
-            wait_until="domcontentloaded",
-            timeout=60000,
-        )
-        page.wait_for_timeout(2500)
-        _reject_consent(page)
+            # Warm-up: land on the flights home, dismiss consent, and bail early
+            # with a typed state if we are walled before any pair runs.
+            page.goto(
+                f"https://www.google.com/travel/flights?hl=en&curr={currency}",
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
+            page.wait_for_timeout(_SETTLE_MS)
+            _reject_consent(page)
+            warm = classify_page(
+                page.locator("body").aria_snapshot(), _page_url(page),
+                match_count=0, min_price=None,
+            )
+            if warm in _BLOCKING_OUTCOMES:
+                job.error_kind = warm.value
+                log.error("blocked at warm-up", extra={"job_id": job.id, "outcome": warm.value})
+                raise ScanBlocked(warm)
 
-        n = 0
-        for dest in dests:
-            if cancel_check():
-                break
-            for dep, ret in pairs:
+            n = 0
+            for dest in dests:
                 if cancel_check():
                     break
-                n += 1
-                job.done = n - 1
-                job.message = f"{route.origin} → {dest} · {dep.isoformat()} → {ret.isoformat()}"
-                # The captured per-leg airline filter (\x32\x02<IATA>) in BASE_TFS
-                # is rejected by Google as of 2026-06 — any airline-filtered tfs
-                # returns an "Oops, something went wrong" page (verified for MS and
-                # QR), so those pairs came back unpriced. Two paths instead:
-                #   * nonstop routes (egyptair): a fresh current-schema blob +
-                #     stops=nonstop filter → exactly the EgyptAir direct round trip
-                #     (EgyptAir is the only nonstop DUB-CAI carrier), real prices.
-                #   * all-airline routes: search UNFILTERED (BASE_TFS still works
-                #     bare) and restrict by route.airline_name in parse_results().
-                if route.nonstop:
-                    url = build_nonstop_url(dep, ret, currency=currency)
-                else:
-                    url = build_url(dep, ret, dest=dest, airline=None, currency=currency)
-                try:
-                    # Google Flights intermittently serves an "Oops, something went
-                    # wrong" page that recovers on reload; retry a few times so a
-                    # transient error doesn't silently drop a date pair. Only the
-                    # explicit error page triggers a retry — a genuinely empty result
-                    # breaks out immediately and is recorded as unpriced.
-                    for attempt in range(_GOTO_ATTEMPTS):
-                        page.goto(url, wait_until="domcontentloaded", timeout=45000)
-                        page.wait_for_timeout(2500)
-                        if "something went wrong" not in page.locator("body").aria_snapshot():
-                            break
-                        if attempt < _GOTO_ATTEMPTS - 1:
-                            page.wait_for_timeout(3000)
-                except Exception as exc:
-                    row: dict[str, Any] = {
-                        "dep": dep.isoformat(),
-                        "ret": ret.isoformat(),
-                        "min_price": None,
-                        "error": str(exc),
-                    }
-                    # Legacy quirk preserved: only the multi-destination scan
-                    # (Turkey) tagged its error rows with the destination.
-                    if route.configurable_destinations or len(route.destinations) > 1:
-                        row = {"dest": dest, **row}
+                for dep, ret in pairs:
+                    if cancel_check():
+                        break
+                    if (
+                        max_scan_seconds is not None
+                        and (time.monotonic() - scan_started) > max_scan_seconds
+                    ):
+                        job.message = "Scan deadline exceeded; stopping early"
+                        log.warning(
+                            "scan deadline exceeded",
+                            extra={"job_id": job.id, "done": job.done, "total": job.total},
+                        )
+                        return
+                    n += 1
+                    job.done = n - 1
+                    job.message = f"{route.origin} → {dest} · {dep.isoformat()} → {ret.isoformat()}"
+                    # The captured per-leg airline filter (\x32\x02<IATA>) in BASE_TFS
+                    # is rejected by Google as of 2026-06, so we never build a
+                    # filtered URL: nonstop routes use the fresh current-schema blob
+                    # (+ stops=nonstop), all-airline routes search UNFILTERED and are
+                    # restricted by route.airline_name in parse_snapshot().
+                    if route.nonstop:
+                        url = build_nonstop_url(dep, ret, currency=currency)
+                    else:
+                        url = build_url(dep, ret, dest=dest, airline=None, currency=currency)
+
+                    started = time.monotonic()
+                    try:
+                        outcome, parsed, snap, match_count, attempt = _scan_one_pair(
+                            page, url, route.airline_name, config
+                        )
+                    except Exception as exc:
+                        # Per-pair navigation/parse failure: record ONE typed error
+                        # row and continue — a single bad page must never abort the
+                        # whole scan (the parse used to run outside this try).
+                        elapsed_ms = int((time.monotonic() - started) * 1000)
+                        is_timeout = "timeout" in type(exc).__name__.lower() or "Timeout" in str(exc)
+                        if is_timeout:
+                            kind = ScanOutcome.TIMEOUT
+                        elif isinstance(exc, (ValueError, AttributeError, IndexError, TypeError, re.error)):
+                            # The parser raised (e.g. aria-format drift) rather than the
+                            # navigation — distinguish it so a parse fault is diagnosable.
+                            kind = ScanOutcome.PARSE_ERROR
+                        else:
+                            kind = ScanOutcome.ERROR
+                        log.warning(
+                            "pair failed",
+                            extra={"job_id": job.id, "route_id": route.id, "dest": dest,
+                                   "dep": dep.isoformat(), "ret": ret.isoformat(), "url": url,
+                                   "error_type": type(exc).__name__, "outcome": kind.value,
+                                   "elapsed_ms": elapsed_ms},
+                            exc_info=True,
+                        )
+                        row = _error_row(route, dest, dep, ret, str(exc), kind.value)
+                        job.results.append(row)
+                        job.done = n
+                        if on_result:
+                            on_result(row)
+                        continue
+
+                    elapsed_ms = int((time.monotonic() - started) * 1000)
+                    log.info(
+                        "scan pair",
+                        extra={"job_id": job.id, "route_id": route.id, "origin": route.origin,
+                               "dest": dest, "dep": dep.isoformat(), "ret": ret.isoformat(),
+                               "url": url, "attempt": attempt, "snapshot_len": len(snap),
+                               "match_count": match_count, "min_price": parsed.get("min_price"),
+                               "outcome": outcome.value, "elapsed_ms": elapsed_ms},
+                    )
+
+                    if outcome in _BLOCKING_OUTCOMES:
+                        # Record the walled pair, then abort the scan (session burned).
+                        row = _error_row(
+                            route, dest, dep, ret,
+                            f"{outcome.value} wall detected", outcome.value,
+                        )
+                        job.results.append(row)
+                        job.done = n
+                        if on_result:
+                            on_result(row)
+                        job.error_kind = outcome.value
+                        raise ScanBlocked(outcome)
+
+                    row = _success_row(parsed, route, dest, dep, ret, url, outcome.value)
                     job.results.append(row)
                     job.done = n
                     if on_result:
                         on_result(row)
-                    continue
-                data = parse_results(page, airline_name=route.airline_name)
-                data.update(
-                    dest=dest,
-                    origin=route.origin,
-                    dep=dep.isoformat(),
-                    ret=ret.isoformat(),
-                    dep_wd=dep.strftime("%a"),
-                    ret_wd=ret.strftime("%a"),
-                    trip_days=(ret - dep).days,
-                    url=url,
-                )
-                job.results.append(data)
-                job.done = n
-                if on_result:
-                    on_result(data)
+        finally:
+            try:
+                browser.close()
+            except Exception:  # noqa: BLE001 - teardown best-effort; never mask the real error
+                log.debug("browser close failed during teardown", exc_info=True)
 
-        browser.close()
+    priced = sum(1 for r in job.results if r.get("min_price") is not None)
+    log.info(
+        "scan end",
+        extra={"job_id": job.id, "route_id": route.id, "done": job.done, "total": job.total,
+               "priced": priced, "unpriced": len(job.results) - priced},
+    )

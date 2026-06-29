@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, model_validator
 
 from app.browser_env import prepare_playwright_browsers
-from app.engine import Route, estimate_pairs, run_scan
+from app.engine import MAX_PAIRS_PER_SCAN, Route, estimate_pairs, run_scan
 from app.jobs import JobStatus, store
 from app.registry import (
     LOCKED_ORIGIN,
@@ -299,6 +299,12 @@ def search(body: SearchRequest) -> dict[str, Any]:
         raise HTTPException(400, str(exc)) from exc
     if total == 0:
         raise HTTPException(422, "search window yields zero date pairs; widen window_days or trip days")
+    if total > MAX_PAIRS_PER_SCAN:
+        raise HTTPException(
+            422,
+            f"search would scan {total} (destination x date-pair) combinations; the max is "
+            f"{MAX_PAIRS_PER_SCAN}. Narrow window_days, trip days, or destinations.",
+        )
 
     try:
         job = store.create(route.id, total, config)
@@ -335,6 +341,14 @@ def create_scan(body: ScanCreate) -> dict[str, Any]:
         total = estimate_total(route_id, config)
     except Exception as exc:
         raise HTTPException(400, str(exc)) from exc
+    if total == 0:
+        raise HTTPException(422, "scan window yields zero date pairs; widen window_days or trip days")
+    if total > MAX_PAIRS_PER_SCAN:
+        raise HTTPException(
+            422,
+            f"scan would run {total} (destination x date-pair) combinations; the max is "
+            f"{MAX_PAIRS_PER_SCAN}. Narrow window_days, trip days, or destinations.",
+        )
 
     try:
         job = store.create(route_id, total, config)
@@ -366,12 +380,13 @@ def get_scan_results(job_id: str) -> dict[str, Any]:
     job = store.get(job_id)
     if not job:
         raise HTTPException(404, "Job not found")
-    priced = [r for r in job.results if r.get("min_price") is not None]
+    results = list(job.results)  # snapshot once for an internally-consistent response
+    priced = [r for r in results if r.get("min_price") is not None]
     priced.sort(key=lambda r: r["min_price"])
     return {
         "id": job.id,
         "status": job.status.value,
-        "results": job.results,
+        "results": results,
         "ranked": priced,
         "winner": priced[0] if priced else None,
     }

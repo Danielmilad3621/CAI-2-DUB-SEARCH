@@ -1,0 +1,17 @@
+- banner:
+  - link "Sign in":
+    - /url: https://accounts.google.com/ServiceLogin?service=searchandassistant
+- text: Loading results
+- search:
+  - heading "Flight search" [level=1]
+  - combobox "Where from?": Dublin
+  - combobox "Where to? Cairo CAI": Cairo
+- main:
+  - heading "Search results" [level=2]
+  - tablist:
+    - tab "BestLearn more about ranking" [selected]:
+      - text: Best
+    - tab "Cheapest from Fetching results Learn more about ranking":
+      - text: Cheapest from Fetching results
+- contentinfo:
+  - button "Currency EUR"

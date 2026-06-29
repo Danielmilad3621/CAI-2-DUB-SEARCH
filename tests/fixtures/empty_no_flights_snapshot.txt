@@ -1,0 +1,13 @@
+- banner:
+  - link "Sign in":
+    - /url: https://accounts.google.com/ServiceLogin?service=searchandassistant
+- search:
+  - heading "Flight search" [level=1]
+  - combobox "Where from?": Dublin
+  - combobox "Where to?": Cairo
+- main:
+  - heading "Search results" [level=2]
+  - heading "Departing flights" [level=3]
+  - text: No departing flights found. Try changing your dates or nearby airports.
+- contentinfo:
+  - button "Currency EUR"

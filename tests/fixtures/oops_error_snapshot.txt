@@ -1,0 +1,10 @@
+- banner:
+  - link "Google":
+    - /url: /
+- main:
+  - img
+  - text: Oops, something went wrong.
+  - text: Try refreshing the page or come back later.
+  - button "Try again"
+- contentinfo:
+  - button "Currency EUR"

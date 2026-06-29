@@ -1,0 +1,6 @@
+- main:
+  - heading "Before you continue to Google" [level=1]
+  - text: We use cookies and data to deliver and maintain Google services.
+  - button "Reject all"
+  - button "Accept all"
+  - button "More options"

@@ -1,0 +1,15 @@
+- banner:
+  - link "Sign in":
+    - /url: https://accounts.google.com/ServiceLogin?service=searchandassistant
+- main:
+  - heading "Search results" [level=2]
+  - heading "Departing flights" [level=3]
+  - list:
+    - listitem:
+      - link "From 512 euros round trip. Nonstop flight with KLM. Leaves Dublin Airport at 1:25 PM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 4:00 PM on Saturday, June 20. Total duration 1 hr 35 min. Select flight"
+      - text: €512 round trip
+    - listitem:
+      - link "From 540 euros round trip. Nonstop flight with Aer Lingus. Leaves Dublin Airport at 2:40 PM on Saturday, June 20 and arrives at Amsterdam Airport Schiphol at 5:25 PM on Saturday, June 20. Total duration 1 hr 45 min. Select flight"
+      - text: €540 round trip
+- contentinfo:
+  - button "Currency EUR"

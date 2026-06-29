@@ -1,0 +1,7 @@
+- main:
+  - heading "About this page" [level=1]
+  - text: Our systems have detected unusual traffic from your computer network.
+  - text: This page checks to see if it's really you sending the requests, and not a robot.
+  - text: Why did this happen?
+  - textbox "Type the characters you see in this image:"
+  - button "Submit"

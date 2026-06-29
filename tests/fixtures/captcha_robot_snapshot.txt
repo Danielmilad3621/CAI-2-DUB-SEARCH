@@ -1,0 +1,6 @@
+- main:
+  - heading "Verify it's you" [level=1]
+  - text: To continue, please confirm you're not a robot.
+  - text: Complete the challenge below and we'll get you back on your way.
+  - button "I'm not a robot"
+  - button "Get a new challenge"
