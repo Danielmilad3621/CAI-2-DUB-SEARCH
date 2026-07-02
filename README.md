@@ -1,4 +1,7 @@
-# DUB Flight Search Engine
+# FareSweep
+
+> Flexible cheap-fare search engine over Google Flights.
+> _(Formerly the Cairo-Dublin search prototype, `CAI-2-DUB-SEARCH`.)_
 
 A **headless flight-search engine** exposed as a documented HTTP/JSON API. It
 finds the cheapest round-trip fares out of **Dublin (DUB)** by sweeping every

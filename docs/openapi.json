@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "DUB Flight Search Engine",
+    "title": "FareSweep",
     "description": "Headless flight-search API over Google Flights. A search is a reverse-engineered `tfs=` round-trip URL scraped headless with Playwright/Firefox, so it drives a real browser across every (destination x date-pair) combination and is therefore **asynchronous**: `POST /api/search` enqueues a job and returns `202` immediately, then you poll `GET /api/scans/{id}` for progress and `GET /api/scans/{id}/results` for ranked fares.\n\n**Provider constraints** (properties of the captured Google Flights blob, surfaced as `4xx` or documented no-ops rather than silent behavior): the origin is pinned to Dublin (DUB); the blob encodes a single-adult round trip; nonstop search is currently Dublin->Cairo only.",
     "version": "0.2.0"
   },

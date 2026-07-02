@@ -1,4 +1,4 @@
-# API Reference — DUB Flight Search Engine
+# API Reference — FareSweep
 
 Base URL (local): `http://localhost:8000`  ·  API version: `0.2.0`
 

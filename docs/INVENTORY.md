@@ -1,4 +1,4 @@
-# DUB Flight Search Engine — Backend Inventory & Resilience Acceptance Criteria
+# FareSweep — Backend Inventory & Resilience Acceptance Criteria
 
 > A map of the FastAPI/Playwright backend (`app/`) and its offline replay harness (`tests/`).
 > Every surface and failure mode below is tagged with a resilience-weighted **acceptance

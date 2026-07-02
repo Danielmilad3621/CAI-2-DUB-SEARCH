@@ -32,7 +32,7 @@ prepare_playwright_browsers()
 ROOT = Path(__file__).resolve().parent.parent
 
 app = FastAPI(
-    title="DUB Flight Search Engine",
+    title="FareSweep",
     version=API_VERSION,
     description=(
         "Headless flight-search API over Google Flights. A search is a reverse-engineered "

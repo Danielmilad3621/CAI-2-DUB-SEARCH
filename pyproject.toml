@@ -1,7 +1,7 @@
 [project]
-name = "dub-flight-search"
+name = "faresweep"
 version = "0.2.0"
-description = "Headless flight-search API over Google Flights (tfs= URLs, Playwright)."
+description = "FareSweep: headless flight-search API over Google Flights (tfs= URLs, Playwright)."
 requires-python = ">=3.9"
 
 [tool.ruff]
