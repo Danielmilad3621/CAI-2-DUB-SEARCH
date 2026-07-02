@@ -84,7 +84,7 @@ client  ───────────────▶  FastAPI (app/main.py)
 From a clean checkout:
 
 ```bash
-cd CAI-2-DUB-SEARCH
+cd faresweep
 
 # 1. Create a venv and install runtime deps
 python3 -m venv .venv
