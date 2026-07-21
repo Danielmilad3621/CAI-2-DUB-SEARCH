@@ -10,6 +10,7 @@ Or via pytest:                      pytest tests/test_search_api.py
 
 from __future__ import annotations
 
+import json
 import sys
 import time
 from pathlib import Path
@@ -162,6 +163,18 @@ def test_health_reports_version_and_provider() -> None:
     assert body["status"] == "ok"
     assert body["version"] == main.API_VERSION
     assert "google-flights" in body["provider"]
+
+
+def test_saved_trips_includes_historical_egyptair_sample() -> None:
+    rows = json.loads((ROOT / "results-2026-05-27.json").read_text())
+    expected_price = min(row["min_egyptair_price"] for row in rows if row.get("min_egyptair_price") is not None)
+
+    trips = client.get("/api/saved-trips").json()
+    egyptair = next((t for t in trips if t["source_file"] == "results-2026-05-27.json"), None)
+
+    assert egyptair is not None, "results-2026-05-27.json not found in /api/saved-trips"
+    assert egyptair["label"] == "DUB → CAI"
+    assert egyptair["price"] == expected_price
 
 
 if __name__ == "__main__":

@@ -412,6 +412,20 @@ def cancel_scan(job_id: str) -> dict[str, str]:
     return {"status": "cancelled"}
 
 
+def _saved_trip_price(row: dict[str, Any]) -> int | float | None:
+    """Return the normalized price from current or historical cached rows."""
+    price = row.get("min_price")
+    if price is not None:
+        return price
+    return row.get("min_egyptair_price")
+
+
+def _saved_trip_sort_key(row: dict[str, Any]) -> int | float:
+    price = _saved_trip_price(row)
+    assert price is not None
+    return price
+
+
 @app.get("/api/saved-trips", tags=["system"])
 def saved_trips() -> list[dict[str, Any]]:
     """Best fares from the bundled cached result files (offline sample data, no scan)."""
@@ -428,17 +442,18 @@ def saved_trips() -> list[dict[str, Any]]:
             rows = json.loads(path.read_text())
         except json.JSONDecodeError:
             continue
-        priced = [r for r in rows if r.get("min_price") is not None]
+        priced = [r for r in rows if _saved_trip_price(r) is not None]
         if not priced:
             continue
-        priced.sort(key=lambda r: r["min_price"])
+        priced.sort(key=_saved_trip_sort_key)
         best = priced[0]
         dest = best.get("dest", "CAI")
+        price = _saved_trip_sort_key(best)
         trips.append(
             {
                 "id": path.stem,
                 "label": f"DUB → {dest}",
-                "price": best["min_price"],
+                "price": price,
                 "currency": "EUR",
                 "dep": best.get("dep"),
                 "ret": best.get("ret"),

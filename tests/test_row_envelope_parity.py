@@ -2,8 +2,8 @@
 
 The first 8 envelope keys (dest, origin, dep, ret, dep_wd, ret_wd, trip_days, url)
 and their ORDER are the legacy contract validated against the pre-refactor
-run_*_scan functions (commit 1848d25, see tests/closeout_envelope_diff.py):
-content-equal for all routes; key order matches legacy egyptair/ams exactly.
+run_*_scan functions at commit 1848d25: content-equal for all routes; key order
+matches legacy egyptair/ams exactly.
 
 The resilience refactor extracted row-building into pure helpers
 (engine._success_row / engine._error_row) and appends ONE new typed field,
